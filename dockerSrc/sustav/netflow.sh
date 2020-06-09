@@ -3,10 +3,15 @@ uredjaji=$(su - postgres -c "psql rnms -c \"copy (select uredjaji.ip,uredjaji.ho
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
-echo "<html><head><title>RNMS - uređaji</title><link rel="stylesheet" type="text/css" href="style.css"></head>"
-
-echo "<p class="small"><a href="index.sh"> < RNMS početna</a></p><h1>NETFLOW KONFIGURACIJA</h1>"
-echo "<section id="contact">"
+echo "<html>"
+echo "<head>"
+echo " <meta charset="UTF-8">"
+echo " <title>RNMS uređaji</title>"
+echo " <link rel="stylesheet" href="style.css">"
+echo "</head>"
+echo "<body>"
+echo "<p class="small"><a href="netflow.sh">< RNMS početna</a></p><h1>NETFLOW KONFIGURACIJA</h1>"
+echo "<section id="forma">"
 echo "<div class="container">"
 echo "<form class="forma" action="startNetflow.sh" method="post">"
 

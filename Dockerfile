@@ -31,10 +31,9 @@ RUN set -eux; \
                 snmp \
                 rrdtool \
                 dnsutils \
-		nfdump \
+				nfdump \
                 wget \
                 curl \
-                openssh-client \
                 net-tools \
                 bzip2 \
                 nmap \
@@ -155,12 +154,13 @@ RUN set -eux; \
 	&& su - postgres -c "psql rnms < /tmp/rnms_db" \
 	&& rm -f /tmp/rnms_db \
 	&& ln -s /var/opt/RNMS/bin /opt/RNMS/bin \
+	&& service cron start \
 	&& chmod 0644 /etc/cron.d/crontab \
-	&& crontab /etc/cron.d/crontab \
-	&& service cron start
+	&& crontab /etc/cron.d/crontab
 
-#  POZOR, TCP:80 omoguci
+#  POZOR, TCP:80 i UDP:2055 omoguci
 EXPOSE 80
+EXPOSE 2055/udp
 
 # SAD: startRNMS
 CMD ["startRNMS.sh"]
