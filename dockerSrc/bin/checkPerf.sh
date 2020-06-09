@@ -18,14 +18,15 @@ for sucelje in $sucelja; do
         uuid=${longUuid:0:20}
         baza=/var/opt/RNMS/rrdb/$uuid.rrd
         if [ ! -f "$baza" ]; then
-                rrdtool create $baza --step $pollingSek \
-                  DS:ifInOctets:COUNTER:$heartbeat:U:U  \
-                  DS:ifOutOctets:COUNTER:$heartbeat:U:U \
-                  DS:ifInErrors:COUNTER:$heartbeat:U:U  \
-                  DS:ifOutErrors:COUNTER:$heartbeat:U:U \
-                  DS:ifInDiscards:COUNTER:$heartbeat:U:U   \
-                  DS:ifOutDiscards:COUNTER:$heartbeat:U:U \
-                  RRA:AVERAGE:0.5:1:300
+                rrdtool create $baza \
+                        --step $pollingSek \
+                        DS:ifInOctets:COUNTER:$heartbeat:U:U  \
+                        DS:ifOutOctets:COUNTER:$heartbeat:U:U \
+                        DS:ifInErrors:COUNTER:$heartbeat:U:U  \
+                        DS:ifOutErrors:COUNTER:$heartbeat:U:U \
+                        DS:ifInDiscards:COUNTER:$heartbeat:U:U   \
+                        DS:ifOutDiscards:COUNTER:$heartbeat:U:U \
+                        RRA:AVERAGE:0.5:1:300
         fi
         ifInOctets=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.10.${ifIndex} | awk -F "Counter32: " '{print $2}')
         ifOutOctets=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.16.${ifIndex} | awk -F "Counter32: " '{print $2}')
