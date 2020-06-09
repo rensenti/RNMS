@@ -1,0 +1,5 @@
+# RNMS
+*/5 * * * * /opt/RNMS/bin/checkStatus.sh >> /var/opt/RNMS/log/checkStatus.log 2>&1
+*/5 * * * * /opt/RNMS/bin/checkPerf.sh 5\ >> /var/opt/RNMS/log/checkPerf.log 2>&1
+
+

@@ -1,0 +1,14 @@
+# brisi sve iz tablice uredjaji
+su - postgres -c "psql rnms -c \"delete from uredjaji;\"" # brisi
+# izlist svih uredjaja
+su - postgres -c 'psql rnms -c "copy (select * from uredjaji) to STDOUT;"'
+# dodaj u tablicu uredjaji
+su - postgres -c  "psql rnms -c \"insert into uredjaji (ip,hostname,systemname,snmp,tipUredjaja) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId')\";"
+# obrisi sve iz baze za odredjeni range
+delete from sucelja using uredjaji where (sucelja.nodeid = uredjaji.id) AND uredjaji.ip like '10.16.96.%';
+delete from kartice using uredjaji where (kartice.nodeid = uredjaji.id) AND uredjaji.ip like '10.16.96.%';
+delete from uredjaji where uredjaji.ip like '10.16.96.%';
+# evo tu
+su - postgres -c "psql rnms -c \"delete from sucelja using uredjaji where (sucelja.nodeid = uredjaji.id) AND uredjaji.ip like '10.16.96.%';\""
+su - postgres -c "psql rnms -c \"delete from kartice using uredjaji where (kartice.nodeid = uredjaji.id) AND uredjaji.ip like '10.16.96.%';\""
+su - postgres -c "psql rnms -c \"delete from uredjaji where uredjaji.ip like '10.16.96.%';\""
