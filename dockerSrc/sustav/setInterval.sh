@@ -28,17 +28,15 @@ faultOrPerf=$(echo $POST_STRING | awk -F = '{print $1}')
 getInterval=$(echo $POST_STRING | awk -F = '{print $2}' | awk -F "&" '{print $1}')
 if [[ "$faultOrPerf" == "intervalFault" ]]; then
 	if [[ "$getInterval" != "nazahtjev" ]];then
-		kurac="status - $faultOrPerf"
 		changeCron status
 	else
 		status=$(/opt/RNMS/bin/checkStatus.sh)
 	fi
 else
 	if [[ "$getInterval" != "nazahtjev" ]];then
-		kurac="perf - $faultOrPerf"
 		changeCron perf
 	else
-                status=$(/opt/RNMS/bin/checkPerf.sh 5)
+		status=$(/opt/RNMS/bin/checkPerf.sh 5)
 	fi
 fi
 

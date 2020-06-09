@@ -142,7 +142,7 @@ ALTER SEQUENCE kartice_id_seq OWNED BY kartice.id;
 -- Name: kartice_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('kartice_id_seq', 353, true);
+SELECT pg_catalog.setval('kartice_id_seq', 0, true);
 
 
 --
@@ -189,7 +189,7 @@ ALTER SEQUENCE sucelja_id_seq OWNED BY sucelja.id;
 -- Name: sucelja_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('sucelja_id_seq', 2877, true);
+SELECT pg_catalog.setval('sucelja_id_seq', 0, true);
 
 
 --
@@ -236,7 +236,7 @@ ALTER SEQUENCE uredjaji_id_seq OWNED BY uredjaji.id;
 -- Name: uredjaji_id_seq; Type: SEQUENCE SET; Schema: public; Owner: postgres
 --
 
-SELECT pg_catalog.setval('uredjaji_id_seq', 1351, true);
+SELECT pg_catalog.setval('uredjaji_id_seq', 0, true);
 
 
 --
