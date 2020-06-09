@@ -37,7 +37,7 @@ for line in $sucelja; do
 	ipAdresa=$(echo $line | awk -F , '{print $9}');
 	echo "<tr>"; 
 	echo "<td>$nodeIP</td>";
-	echo "<td>$ifName<div class=\"popup\"><img src=\"grafovi/$uuid.png\"</td>";
+	echo "<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/$uuid.png\"</td>";
 	echo "<td>$ipAdresa</td>";
 	echo "<td>$ifAlias</td>";
 	echo "<td>$ifPhysAddress</td>";

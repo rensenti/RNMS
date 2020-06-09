@@ -1,10 +1,9 @@
 #!/bin/bash
 PID=/var/run/nfcapd.pid
-if [ -f "$PID" ]; then
-  pid=$(ps -ef | grep nfcapd | grep -v grep | awk '{print $2}' |  head -1)
+pid=$(ps -ef | grep nfcapd | grep -v grep | awk '{print $2}' |  head -1)
+if [ ! -z "pid" ]; then
   echo "Netflow proces aktivan [${pid}], pokusaj restarta..."
-  kill -1 $pid || kill -9 $pid
-  rm -f $PID
+  kill -9 $pid && rm -f $PID
 fi
 ## NFCAPD - NetFlow collector - kreiraj argumente i pokreni daemon
 # -P PID file; -p UDP PORT; -D daemon mode; -T all -all extensions

@@ -24,7 +24,7 @@ echo "<div class="krugi">"
 echo "<div class="term">"
 netflow=$(su - postgres -c "psql rnms -c \"copy (select * from uredjaji where netflow='da') to STDOUT WITH CSV HEADER;\"" | tail -n +2 | wc -l)
 if [ $netflow -gt 0 ]; then
-  su - root -c "/opt/RNMS/bin/startNetflow.sh | sed 's/$/\<br\>\<br\>/g'"
+  /opt/RNMS/bin/startNetflow.sh | sed 's/$/\<br\>\<br\>/g'
 else
   echo "Trenutno nema nijednog NetFlow izvora, Netflow daemon ugasen"
   /opt/RNMS/bin/startNetflow.sh > /dev/null 2>&1
