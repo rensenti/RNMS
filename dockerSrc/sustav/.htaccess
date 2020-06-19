@@ -1,3 +1,0 @@
-RewriteEngine on
-RewriteCond %{DOCUMENT_ROOT}%{REQUEST_URI} !-f
-RewriteRule \.(gif|jpe?g|png|bmp) /slike/Nema.png [NC,L]
