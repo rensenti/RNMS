@@ -13,6 +13,7 @@ case $1 in
 		su - postgres -c  "psql rnms -c \"insert into kartice (nodeid,entphysicalindex,entphysicalname,entphysicaldescr,entphysicalclass,entphysicalserialnum,entphysicalmodelname,status) VALUES ('$nodeId','$entphysicalIndex','$entityPhysicalName','$entPhysicalDescr','$entPhysicalClass','$entPhysicalSerialNum','$entPhysicalModelName','$status')\";"
 	;;
 esac
+unset IFS
 }
 
 checkNode () {
@@ -54,14 +55,14 @@ getInterfaces () {
 		ifNameOID=1.3.6.1.2.1.31.1.1.1.1.${index}
 		ifAliasOID=1.3.6.1.2.1.31.1.1.1.18.${index}
 		# izvuci vrijednost
-		ifSpeed=$(snmpget -v2c -c $community $ip $ifSpeedOID | awk -F "\: " '{print $2}')
+		ifSpeed=$(snmpget -v2c -c $community $ip $ifSpeedOID | awk -F "\: " '{print $2}' | head -1)
 		ifType=$(snmpget -m+IF-MIB -v2c -c $community $ip $ifTypeOID | awk -F "\: " '{print $2}')
 		ifPhysAddress=$(snmpget -v2c -c $community $ip $ifPhysAddressOID | awk -F "\: " '{print $2}')
 		ifName=$(snmpget -v2c -c $community $ip $ifNameOID | awk -F "\: " '{print $2}')
-		ifAlias=$(snmpget -v2c -c $community $ip $ifAliasOID | awk -F "\: " '{print $2}')
+		ifAlias=$(snmpget -v2c -c $community $ip $ifAliasOID | awk -F "\: " '{print $2}' | sed 's/\"//g')
 		ipAddr=$(snmpwalk -v 2c -c $community $ip 1.3.6.1.2.1.4.20.1.2 | grep -P " INTEGER: ${index}$" | awk -F "." '{print $11"."$12"."$13"."$14}' | awk -F " =" '{print $1}')
 		# prikazi vrijednost
-		echo $ip - interface: ${index}: $ifName - $ifAlias - $ifType - $ifSpeed - $Type - $ifPhysAddress
+		echo $ip - index: ${index}: $ifName - $ifAlias - $ifType - $ifSpeed - $ifType - $ifPhysAddress - $ipAddr
 		# ubacider u baazu
 		insertInto sucelja
 	done
@@ -95,7 +96,7 @@ for ipRaspon in $@; do
 					echo "UREDJAJ - $uredjaj - pokreni SNMP discovery"
 					SNMP=da 
 					insertInto uredjaji
-					checkNode id && mkdir /var/opt/RNMS/netflow/$nodeId
+					checkNode id && mkdir /RNMS/netflow/$nodeId
 					getInterfaces
 				else
 					SNMP=ne
@@ -104,7 +105,7 @@ for ipRaspon in $@; do
 					community='n/a'
 					echo "UREDJAJ - $uredjaj - ne podrzava SNMP"
 					insertInto uredjaji
-					checkNode id && mkdir /var/opt/RNMS/netflow/$nodeId
+					checkNode id && mkdir /RNMS/netflow/$nodeId
 				fi
 			fi
 	done

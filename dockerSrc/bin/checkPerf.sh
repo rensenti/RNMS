@@ -16,7 +16,7 @@ for sucelje in $sucelja; do
         ifIndex=$(echo $sucelje | awk -F , '{print $3}')
         longUuid=$(echo $nodeIP-$ifName | sha1sum);
         uuid=${longUuid:0:20}
-        baza=/var/opt/RNMS/rrdb/$uuid.rrd
+        baza=/RNMS/rrdb/$uuid.rrd
         if [ ! -f "$baza" ]; then
                 rrdtool create $baza \
                         --step $pollingSek \
@@ -36,9 +36,9 @@ for sucelje in $sucelja; do
         ifOutDiscards=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.19.${ifIndex} | awk -F "Counter32: " '{print $2}')
         vrijeme=$(date +%s)
         rrdtool update $baza $vrijeme:$ifInOctets:$ifOutOctets:$ifInErrors:$ifOutErrors:$ifInDiscards:$ifOutDiscards
-	if [ ! -d /var/opt/RNMS/http/sustav/slike/perfGrafovi ]; then mkdir -p /var/opt/RNMS/http/sustav/slike/perfGrafovi; fi
+	if [ ! -d /RNMS/web_aplikacija/slike/perfGrafovi ]; then mkdir -p /RNMS/web_aplikacija/slike/perfGrafovi; fi
         rrdtool graph \
-                /var/opt/RNMS/http/sustav/slike/perfGrafovi/$uuid.png \
+                /RNMS/web_aplikacija/slike/perfGrafovi/$uuid.png \
                 --start -20000 \
                 -S $granulacija \
                 --width 400 \

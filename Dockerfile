@@ -1,23 +1,19 @@
 FROM debian:buster-slim
 
-# add our user and group first to make sure their IDs get assigned consistently, regardless of whatever dependencies get added
-#RUN groupadd -r www-data && useradd -r --create-home -g www-data www-data
-
-ENV RNMS_PREFIX /var/opt/RNMS
-ENV HTTPD_PREFIX $RNMS_PREFIX/http
-ENV PATH $HTTPD_PREFIX/bin:$PATH
+ENV RNMS_PREFIX /RNMS
+ENV HTTPD_PREFIX $RNMS_PREFIX/apache
+ENV PATH $RNMS_PREFIX/bin:$HTTPD_PREFIX/bin:$PATH
 ENV HTTPD_VERSION 2.4.43
 ENV HTTPD_SHA256 a497652ab3fc81318cdc2a203090a999150d86461acff97c1065dc910fe10f43
 ENV LANG en_US.UTF-8  
 
 RUN mkdir -p "$HTTPD_PREFIX" \
-	&& mkdir -p "$HTTPD_PREFIX/sustav" \
+	&& mkdir -p "$RNMS_PREFIX/web_aplikacija" \
 	&& mkdir -p "$RNMS_PREFIX/netflow" \
 	&& mkdir -p "$RNMS_PREFIX/database" \
 	&& mkdir -p "$RNMS_PREFIX/bin" \
 	&& mkdir -p "$RNMS_PREFIX/rrdb" \
-	&& mkdir -p "$RNMS_PREFIX/log" \
-	&& mkdir -p /opt/RNMS ; 
+	&& mkdir -p "$RNMS_PREFIX/log";
      
 WORKDIR $HTTPD_PREFIX
 
@@ -27,32 +23,32 @@ RUN set -eux; \
 		libapr1-dev \
 		libaprutil1-dev \
 		libaprutil1-ldap \
-                postgresql-11 \
-                snmp \
-                rrdtool \
-                dnsutils \
-				nfdump \
-                wget \
-                curl \
-                net-tools \
-                bzip2 \
-                nmap \
-                ca-certificates \
-                dirmngr \
-                dpkg-dev \
-                gcc \
-                gnupg \
-                libbrotli-dev \
-                libcurl4-openssl-dev \
-                libjansson-dev \
-                liblua5.2-dev \
-                libnghttp2-dev \
-                libpcre3-dev \
-                libssl-dev \
-                libxml2-dev \
-                make \
-                zlib1g-dev \
-                cron \
+		postgresql-11 \
+		snmp \
+		rrdtool \
+		dnsutils \
+		nfdump \
+		wget \
+		curl \
+		net-tools \
+		bzip2 \
+		nmap \
+		ca-certificates \
+		dirmngr \
+		dpkg-dev \
+		gcc \
+		gnupg \
+		libbrotli-dev \
+		libcurl4-openssl-dev \
+		libjansson-dev \
+		liblua5.2-dev \
+		libnghttp2-dev \
+		libpcre3-dev \
+		libssl-dev \
+		libxml2-dev \
+		make \
+		zlib1g-dev \
+		cron \
         ; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
@@ -127,10 +123,12 @@ RUN set -eux; \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 
+WORKDIR $HTTPD_PREFIX
+
 # schema baze podataka za PSQL
 COPY ./dockerSrc/rnms_db /tmp/rnms_db
 # src RNMS datoteke za HTTP
-COPY ./dockerSrc/sustav $HTTPD_PREFIX/sustav
+COPY ./dockerSrc/web_aplikacija $RNMS_PREFIX/web_aplikacija
 COPY ./dockerSrc/bin $RNMS_PREFIX/bin
 COPY ./dockerSrc/conf/crontab /etc/cron.d/
 COPY ./dockerSrc/mibs /usr/share/snmp/mibs/
@@ -149,11 +147,10 @@ COPY ./dockerSrc/startRNMS.sh /usr/local/bin/
 RUN set -eux; \
         chown postgres:postgres "$RNMS_PREFIX/database" \
 	&& su - postgres -c "/usr/lib/postgresql/11/bin/initdb -D $RNMS_PREFIX/database" \
-        && service postgresql start \
+	&& service postgresql start \
 	&& su - postgres -c "psql -c \"create database rnms\"" \
 	&& su - postgres -c "psql rnms < /tmp/rnms_db" \
 	&& rm -f /tmp/rnms_db \
-	&& ln -s /var/opt/RNMS/bin /opt/RNMS/bin \
 	&& service cron start \
 	&& chmod 0644 /etc/cron.d/crontab \
 	&& crontab /etc/cron.d/crontab
