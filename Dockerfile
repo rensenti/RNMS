@@ -123,7 +123,7 @@ RUN set -eux; \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false;
 
-WORKDIR $HTTPD_PREFIX
+WORKDIR $RNMS_PREFIX
 
 # schema baze podataka za PSQL
 COPY ./dockerSrc/rnms_db /tmp/rnms_db
