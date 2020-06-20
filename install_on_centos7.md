@@ -24,12 +24,12 @@ git config --global user.name "rensenti"
 git config --global user.email "rene@njahaha.net"
 # kreiraj lokalni repozitorij
 git init
-# spoji lokalni repozitorij na vanjski github repozitorij
+# spoji lokalni repozitorij na vanjski GitHub repozitorij
 git remote add origin https://github.com/rensenti/RNMS.git
 # verifikacija
 git remote -v
-# konfiguriraj da ne trazi username i password svaki put i odradi neku akciju prema vanjskom
+# konfiguriraj da ne trazi GitHub username i password svaki put (za push/pull akcije) 
 git config --global credential.helper store
-# npr. uzmi sve s vanjskog repozitorija - master branch
-git pull origin master
+# ...nastavno na gornju naredbu, odraditi neku push/pull akciju da se GitHub kredencijali zapisu lokalno
+git pull origin master # npr. pull cijeli vanjski repozitorij  (branch master) u lokalni
 ```
