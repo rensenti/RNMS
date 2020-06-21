@@ -88,14 +88,26 @@ done
 echo "</table>"
 echo "<h3>NetFlow podaci</h3>"
 echo "<div class="krugi">"
-echo "<div class="netflow">"
 if [ "$netflow" == "da" ]; then
   echo "<b>Statistika o suceljima</b>:<br><br>"
-  IFS=$'\n';for line in $(nfdump -R netflow/${id} -s if -o csv | head -n-4); do ifIndex=$(echo $line | awk -F , '{print $5}'); ifName=$(su - postgres -c "psql rnms -c \"copy (select ifname from sucelja where ifindex='$ifIndex') TO STDOUT;\""); if [ ! -z $ifName ]; then echo "<tr> $line </tr>" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<td>/g' | sed 's/^/<td>/g'; fi; done
-#  echo $(nfdump -R /RNMS/netflow/${id}/ -s if | sed 's/$/\<br\>\<br\>/g' | grep -Pv 'Sys|processed')
+  IFS=$'\n';
+  echo "<table>"
+  for line in $(nfdump -R /RNMS/netflow/${id} -s if -o csv | head -n-4); do
+    ifIndex=$(echo $line | awk -F , '{print $5}');
+    ifName=$(su - postgres -c "psql rnms -c \"copy (select ifname from sucelja where ifindex='$ifIndex') TO STDOUT;\"");
+    if [ ! -z $ifName ]; then
+      echo "<tr>"
+      echo "$line" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+      echo "</tr>"
+    fi;
+  unset IFS;
+  done
+  echo "</table>"
+  #echo $(nfdump -R /RNMS/netflow/${id}/ -s if | sed 's/$/\<br\>\<br\>/g' | grep -Pv 'Sys|processed')
   echo "<br><br>"
-  echo "<b>Statistika o protokolima</b>:<br><br>"
-  echo $(nfdump -R /RNMS/netflow/${id}/ -s proto |  sed 's/$/\<br\>\<br\>/g')
+  echo "<div class="netflow">"
+    echo "<b>Statistika o protokolima</b>:<br><br>"
+    echo $(nfdump -R /RNMS/netflow/${id}/ -s proto |  sed 's/$/\<br\>\<br\>/g')
 else
   echo "Za navedeni uredjaj trenutno nema NetFlow podataka<br><br>"
 fi
