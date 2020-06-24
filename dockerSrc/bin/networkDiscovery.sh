@@ -60,7 +60,7 @@ getInterfaces () {
 		ifPhysAddress=$(snmpget -v2c -c $community $ip $ifPhysAddressOID | awk -F "\: " '{print $2}')
 		ifName=$(snmpget -v2c -c $community $ip $ifNameOID | awk -F "\: " '{print $2}')
 		ifAlias=$(snmpget -v2c -c $community $ip $ifAliasOID | awk -F "\: " '{print $2}' | sed 's/\"//g')
-		ipAddr=$(snmpwalk -v 2c -c $community $ip 1.3.6.1.2.1.4.20.1.2 | grep -P " INTEGER: ${index}$" | awk -F "." '{print $11"."$12"."$13"."$14}' | awk -F " =" '{print $1}')
+		ipAddr=$(snmpwalk -v 2c -c $community $ip 1.3.6.1.2.1.4.20.1.2 | grep -P " INTEGER: ${index}$" | awk -F "." '{print $11"."$12"."$13"."$14}' | awk -F " =" '{print $1}' | sed ':a;N;$!ba;s/\n/ /g')
 		# prikazi vrijednost
 		echo $ip - index: ${index}: $ifName - $ifAlias - $ifType - $ifSpeed - $ifType - $ifPhysAddress - $ipAddr
 		# ubacider u baazu
