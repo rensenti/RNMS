@@ -1,7 +1,7 @@
 #!/bin/bash
 PID=/var/run/nfcapd.pid
 pid=$(ps -ef | grep nfcapd | grep -v grep | awk '{print $2}' |  head -1)
-if [ ! -z "pid" ]; then
+if [ ! -z "$pid" ]; then
   echo "Netflow proces aktivan [${pid}], pokusaj restarta..."
   kill -9 $pid && rm -f $PID
 fi
