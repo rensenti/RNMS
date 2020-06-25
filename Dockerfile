@@ -30,6 +30,7 @@ RUN set -eux; \
 		net-tools \
 		bzip2 \
 		nmap \
+		iputils-ping \
 		libapr1-dev \
 		libaprutil1-dev \
 		libaprutil1-ldap \
