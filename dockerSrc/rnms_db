@@ -7338,8 +7338,8 @@ COPY deviceprofile (oid, model, kategorija, proizvodjac, tip) FROM stdin;
 .1.3.6.1.4.1.3224.1.4	juniperNetscreenNs100	Firewall	Juniper Networks	Juniper NetScreen Firewalls
 .1.3.6.1.4.1.3224.1.5	juniperNetscreenNs1000	Firewall	Juniper Networks	Juniper NetScreen Firewalls
 .1.3.6.1.4.1.3224.1.6	juniperNetscreenNs500	Firewall	Juniper Networks	Juniper NetScreen Firewalls
-.1.3.6.1.4.1.9.1.672	ciscoASA5540	Firewall	Cisco	Cisco ASA 5500 Series        
-.1.3.6.1.4.1.14988.1	routerBoard2011UiAS-2HnD-IN	Router	Mikrotik	Router Board RB2011Ui serija
+.1.3.6.1.4.1.9.1.672	ciscoASA5540	Firewall	Cisco	Cisco ASA 5500 Series
+.1.3.6.1.4.1.14988.1	routerBoard2011UiAS-2HnD	Router	Mikrotik	Router Board RB2011Ui serija
 \.
 
 
