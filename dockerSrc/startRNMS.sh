@@ -4,7 +4,7 @@ set -e
 # ako je na hostu taj dir prazan, popuni sadrzaj tog dira sa Src
 # ako nije prazan onda je RNMS vec bio pokrenut i vec ima strukturu (i podatke)
 if [ $(find $RNMS_PREFIX -type f | wc -l) -lt 2 ]; then cp -Rp /var/tmp/Src/* $RNMS_PREFIX/; fi
-. $RNMS_PREFIX/pomagalice
+. $RNMS_PREFIX/bin/pomagalice
 
 service cron start
 rm -f /usr/local/apache2/logs/httpd.pid
