@@ -1,0 +1,13 @@
+version: '3'
+services:
+rnms:
+  container_name: rnms
+#  image: rdebeuc/rnms:x86_64-latest
+  image: rnms:0.3
+  volumes:
+    - /var/opt/RNMS:/RNMS
+  environment:
+    - TZ=Europe/Zagreb
+  restart: "no"
+  privileged: true
+  network_mode: host
