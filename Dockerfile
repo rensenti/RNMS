@@ -19,6 +19,7 @@ WORKDIR $HTTPD_PREFIX
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
+		iproute2 \
 		cron \
 		postgresql-11 \
 		snmp \

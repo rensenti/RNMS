@@ -1,3 +1,4 @@
+#!/bin/bash
 # IZ IANA-RTPROTO-MIB
 # IANAipRouteProtocol ::= TEXTUAL-CONVENTION
 #    SYNTAX      INTEGER {
