@@ -39,15 +39,15 @@ Ukoliko se radi o prvom pokretanju RNMS-a gornja naredba se može izvršavati ne
 docker ps
 ```
 Uz preuzimanje slike kontejnera i pokretanja instance RNMS kontejnera, gornja naredba je ujedno kreirala i lokalni direktorij `/var/opt/RNMS` sljedeće strukture:
-| direktorij     | svrha                       |
-| -------------- | --------------------------- |
-| apache         | HTTPD Apache instalacija    |
-| bin            | RNMS skripte                |
-| database       | RNMS Postgres baza podataka |
-| log            | RNMS logovi                 |
-| rrdb           | RNMS rrdb baze podataka     |
-| netflow        | RNMS nfcapd Netflow podaci  |
-| web_aplikacija | RNMS web frontend           |
+| direktorij     | svrha                                                                    |
+| -------------- | ------------------------------------------------------------------------ |
+| apache         | HTTP Apache instalacija (konfiguracijska datoteka u `./conf/httpd.conf`) |
+| bin            | RNMS skripte                                                             |
+| database       | RNMS Postgres baza podataka                                              |
+| log            | RNMS logovi                                                              |
+| rrdb           | RNMS rrdb baze podataka                                                  |
+| netflow        | RNMS nfcapd Netflow podaci                                               |
+| web_aplikacija | RNMS web frontend                                                        |
 
 Sljedećom naredbom provjeriti RNMS WEB URL i pristupiti mu koristeći proizvoljni Web preglednik (testirano s Mozilla Firefox v70+)
 ```bash
