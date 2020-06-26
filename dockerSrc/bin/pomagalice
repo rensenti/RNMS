@@ -1,0 +1,6 @@
+hostIP () {
+    sucelje=$(ip route | grep default | grep -Po 'dev\s\w+');    
+    RNMS_IP=$(ip route | grep -P "$sucelje.*src" | head -1 | awk -F "src " '{print $2}' | awk '{print $1}')
+    export RNMS_IP
+    echo $RNMS_IP
+}
