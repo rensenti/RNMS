@@ -34,11 +34,22 @@ Preuzeti posljednju verziju [docker-compose.yml](./docker-compose.yml) datoteke 
 ```bash
 docker-compose up -f /usr/share/RNMS/docker-compose.yml -d 
 ```
-Ukoliko se radi o prvom pokretanju RNMS-a gornja naredba se može izvršavati nekoliko minuta jer se lokalno preuzima cijela slika kontejnera (engl. *Container Image*), no kad se izvrši - RNMS kontejner će biti dostupan što je moguće verificirati s naredbom:
+Ukoliko se radi o prvom pokretanju RNMS-a gornja naredba se može izvršavati nekoliko minuta jer se lokalno preuzima cijela slika kontejnera (engl. *Container Image*), no kad se izvrši - RNMS kontejner će biti podignut što je moguće verificirati s naredbom:
 ```bash
 docker ps
 ```
-Sljedećom naredbom provjeriti koji je RNMS WEB URL i pristupiti mu koristeći proizvoljni Web preglednik (testirano s Mozilla Firefox v70+)
+Uz preuzimanje slike kontejnera i pokretanja instance RNMS kontejnera, gornja naredba je ujedno kreirala i lokalni direktorij `/var/opt/RNMS` sljedeće strukture:
+| direktorij     | svrha                       |
+| -------------- | --------------------------- |
+| apache         | HTTPD Apache instalacija    |
+| bin            | RNMS skripte                |
+| database       | RNMS Postgres baza podataka |
+| log            | RNMS logovi                 |
+| rrdb           | RNMS rrdb baze podataka     |
+| netflow        | RNMS nfcapd Netflow podaci  |
+| web_aplikacija | RNMS web frontend           |
+
+Sljedećom naredbom provjeriti RNMS WEB URL i pristupiti mu koristeći proizvoljni Web preglednik (testirano s Mozilla Firefox v70+)
 ```bash
 docker logs rnms
 ```
