@@ -7,5 +7,9 @@ dockerDestroy () {
 }
 
 rnms () {
-docker exec -i rnms $@
+	if [ -z $1 ]; then
+		docker exec -i rnms /bin/bash
+	else
+		docker exec -i rnms $@
+	fi
 }
