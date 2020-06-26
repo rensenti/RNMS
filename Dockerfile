@@ -118,7 +118,9 @@ RUN set -eux; \
 	&& rm -f /tmp/rnms_db \
 	&& service cron start \
 	&& chmod 0644 /etc/cron.d/crontab \
-	&& crontab /etc/cron.d/crontab
+	&& crontab /etc/cron.d/crontab \
+	&& mkdir /var/tmp/Src \
+	&& cp -Rp $RNMS_PREFIX/* /var/tmp/Src/
 
 #  POZOR, TCP:80 i UDP:2055 omoguci
 EXPOSE 80

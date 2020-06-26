@@ -1,0 +1,19 @@
+dockerBuild () {
+        docker build -t rnms:0.3 .
+	mount="$(pwd)/$(hostname -s)_rnms_mount"
+	if [ ! -d $mount ]; then mkdir -p $mount; fi
+        docker run -dit --name rnms -p 8080:80/tcp -p 2055:2055/udp --mount type=bind,source=$mount,target=/RNMS rnms:0.3
+	docker ps
+}
+
+dockerDestroy () {
+        docker stop rnms && docker rm rnms && docker rmi rnms:0.3
+}
+
+rnms () {
+	if [ -z $1 ]; then
+		docker exec -i rnms /bin/bash
+	else
+		docker exec -i rnms $@
+	fi
+}
