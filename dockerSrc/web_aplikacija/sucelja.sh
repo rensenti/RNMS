@@ -28,8 +28,8 @@ for line in $sucelja; do
 	nodeId=$(echo $line | awk -F , '{print $8}');
 	nodeIP=$(echo $line | awk -F , '{print $2}');
 	ifName=$(echo $line | awk -F , '{print $3}');
-        longUuid=$(echo $nodeIP-$ifName | sha1sum);
-        uuid=${longUuid:0:20}
+	longUuid=$(echo $nodeIP-$ifName | sha1sum);
+	uuid=${longUuid:0:20}
 	ifAlias=$(echo $line | awk -F , '{print $4}');
 	ifPhysAddress=$(echo $line | awk -F , '{print $5}');
 	ifType=$(echo $line | awk -F , '{print $6}');
@@ -37,7 +37,7 @@ for line in $sucelja; do
 	ipAdresa=$(echo $line | awk -F , '{print $9}');
 	echo "<tr>"; 
 	echo "<td>$nodeIP</td>";
-	echo "<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/$uuid.png\"</td>";
+	echo "<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifName}.png\"</td>";
 	echo "<td>$ipAdresa</td>";
 	echo "<td>$ifAlias</td>";
 	echo "<td>$ifPhysAddress</td>";

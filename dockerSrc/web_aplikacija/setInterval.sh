@@ -15,7 +15,7 @@ case $1 in
 	perf)
 		crontab -l > $tmpCrontab;
 		grep -v Perf $tmpCrontab > $tmpCrontab2;
-		echo "*/$getInterval * * * * /RNMS/bin/checkPerf.sh $getInterval\ >> /RNMS/log/checkPerf.log 2>&1" >> $tmpCrontab2;
+		echo "*/$getInterval * * * * /RNMS/bin/checkPerf.sh RNMS $getInterval\ >> /RNMS/log/checkPerf.log 2>&1" >> $tmpCrontab2;
 		crontab $tmpCrontab2
 		status=$(crontab -l)
 	;;
@@ -36,7 +36,7 @@ else
 	if [[ "$getInterval" != "nazahtjev" ]];then
 		changeCron perf
 	else
-		status=$(/RNMS/bin/checkPerf.sh 5)
+		status=$(/RNMS/bin/checkPerf.sh RNMS 5)
 	fi
 fi
 

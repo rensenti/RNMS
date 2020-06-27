@@ -69,7 +69,7 @@ echo "<table>"
  echo "</thead>"
 for line in $sucelja; do
         ifName=$(echo $line | awk -F , '{print $3}');
-        longUuid=$(echo $nodeIP-$ifName | sha1sum);
+        longUuid=$(echo $nodeIP-$ifNamef | sha1sum);
         uuid=${longUuid:0:20}
         ifAlias=$(echo $line | awk -F , '{print $4}');
         ifPhysAddress=$(echo $line | awk -F , '{print $5}');
@@ -77,7 +77,7 @@ for line in $sucelja; do
         status=$(echo $line | awk -F , '{print $7}');
         ipAdresa=$(echo $line | awk -F , '{print $9}');
         echo "<tr>";
-        echo "<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/$uuid.png\"</td>";
+	      echo "<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifName}.png\"</td>";
         echo "<td>$ipAdresa</td>";
         echo "<td>$ifAlias</td>";
         echo "<td>$ifPhysAddress</td>";
