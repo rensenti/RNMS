@@ -1,75 +1,124 @@
 #!/bin/bash
-#set -x
-polling=$1
-pollingSek=$(( $polling * 60))
-heartbeat=$(( $pollingSek * 3 ))
-granulacija=$(( $pollingSek / 2 ))
-sucelja=$(su - postgres -c "psql rnms -c \"copy (select * from sucelja where status='up(1)' AND iftype='ethernetCsmacd(6)')  to STDOUT WITH CSV HEADER;\"" | tail -n +2)
-IFS=$'\n'
-for sucelje in $sucelja; do
-        #echo $sucelje
-        nodeId=$(echo $sucelje | awk -F , '{print $2}')
-        nodeIP=$(su - postgres -c "psql rnms -c \"copy (select ip from uredjaji where id="$nodeId")  to STDOUT WITH CSV HEADER;\"" | tail -1)
-        echo $nodeIP
-        community=$(su - postgres -c "psql rnms -c \"copy (select community from uredjaji where id="$nodeId")  to STDOUT WITH CSV HEADER;\"" | tail -1)
-        ifName=$(echo $sucelje | awk -F , '{print $4}')
-        ifIndex=$(echo $sucelje | awk -F , '{print $3}')
-        longUuid=$(echo $nodeIP-$ifName | sha1sum);
-        uuid=${longUuid:0:20}
-        baza=/RNMS/rrdb/$uuid.rrd
-        if [ ! -f "$baza" ]; then
-                rrdtool create $baza \
-                        --step $pollingSek \
-                        DS:ifInOctets:COUNTER:$heartbeat:U:U  \
-                        DS:ifOutOctets:COUNTER:$heartbeat:U:U \
-                        DS:ifInErrors:COUNTER:$heartbeat:U:U  \
-                        DS:ifOutErrors:COUNTER:$heartbeat:U:U \
-                        DS:ifInDiscards:COUNTER:$heartbeat:U:U   \
-                        DS:ifOutDiscards:COUNTER:$heartbeat:U:U \
-                        RRA:AVERAGE:0.5:1:300
+
+insertInto () {
+case $1 in
+    uredjaji)
+        su - postgres -c  "psql rnms -c \"update uredjaji set status='$status' where id='$uredjajID'\";" | grep -v UPDATE
+        ;;
+    sucelja)
+        su - postgres -c  "psql rnms -c \"update sucelja set status='$ifOperStatus' where id='$suceljeID'\";"  | grep -v UPDATE
+        ;;
+esac
+}
+
+checkNodeStatus () {
+    echo "*************************************************"
+    echo "Uredjaj $ip/$community - provjera statusa:"
+    echo "*************************************************"
+    uptime=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.1.3.0)
+    if [ ! -z "$uptime" ]; then
+        status='OK (SNMP)'
+        echo " UREDAJ $ip: $status"
+        if [ $rnms -eq 0 ]; then
+            checkInterfaces
+            true
+        else
+            insertInto uredjaji
         fi
-        ifInOctets=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.10.${ifIndex} | awk -F "Counter32: " '{print $2}')
-        ifOutOctets=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.16.${ifIndex} | awk -F "Counter32: " '{print $2}')
-        ifInErrors=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.14.${ifIndex} | awk -F "Counter32: " '{print $2}')
-        ifOutErrors=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.18.${ifIndex} | awk -F "Counter32: " '{print $2}')
-        ifInDiscards=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.13.${ifIndex} | awk -F "Counter32: " '{print $2}')
-        ifOutDiscards=$(snmpget -v 2c -c $community $nodeIP 1.3.6.1.2.1.2.2.1.19.${ifIndex} | awk -F "Counter32: " '{print $2}')
-        vrijeme=$(date +%s)
-        rrdtool update $baza $vrijeme:$ifInOctets:$ifOutOctets:$ifInErrors:$ifOutErrors:$ifInDiscards:$ifOutDiscards
-	if [ ! -d /RNMS/web_aplikacija/slike/perfGrafovi ]; then mkdir -p /RNMS/web_aplikacija/slike/perfGrafovi; fi
-        rrdtool graph \
-                /RNMS/web_aplikacija/slike/perfGrafovi/$uuid.png \
-                --start -20000 \
-                -S $granulacija \
-                --width 400 \
-                --height 160 \
-                -t "${nodeIP}:${ifName}" \
-                -z -c "BACK#616066" \
-                -c "SHADEA#FFFFFF" \
-                -c "SHADEB#FFFFFF" \
-                -c "MGRID#AAAAAA" \
-                -c "GRID#CCCCCC" \
-                -c "ARROW#333333" \
-                -c "FONT#333333" \
-                -c "AXIS#333333" \
-                -c "FRAME#333333" \
-                -c "CANVAS#000000" \
-                -c "FONT#FFFFFF" \
-                -c "BACK#000000"\
-                -l 0 \
-                -a PNG \
-                -v "B" \
-                DEF:ifInOctets=$baza:ifInOctets:AVERAGE \
-                DEF:ifOutOctets=$baza:ifOutOctets:AVERAGE \
-                DEF:ifInErrors=$baza:ifInErrors:AVERAGE \
-                DEF:ifOutErrors=$baza:ifOutErrors:AVERAGE \
-                DEF:ifInDiscards=$baza:ifInDiscards:AVERAGE \
-                DEF:ifOutDiscards=$baza:ifOutDiscards:AVERAGE \
-                AREA:ifInOctets#00FF00:"Unutarnji promet" \
-                AREA:ifOutOctets#0000FF:"Vanjski promet" \
-                LINE1:ifInErrors#E5003D:"Errors in" \
-                LINE2:ifOutErrors#E50008:"Erorrs out" \
-                LINE3:ifInDiscards#E54A00:"Discards in" \
-                LINE4:ifOutDiscards#E59C00:"Discards out"
-done
-unset IFS
+    else
+        status='nije OK (SNMP)'
+        echo " UREDAJ $ip: $status"
+        false
+    fi
+}
+
+checkInterfaces () {
+    ifIndexi=$(snmpwalk -On -v2c -c $community $ip 1.3.6.1.2.1.2.2.1.1 | awk -F "\: " '{print $2}')
+    for index in $ifIndexi; do
+        ifName=$(snmpget -v2c -c $community $ip 1.3.6.1.2.1.31.1.1.1.1.${index} | awk -F "\: " '{print $2}')
+        ifOperStatus=$(snmpget -m+IF-MIB -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.8.$index  | awk -F "INTEGER: " '{print $2}')
+        if [ -z $ifOperStatus ]; then
+            ifOperStatus="nepoznat"
+        fi
+        echo "  - sucelje ${ifName} (index $index) | operativni status: $ifOperStatus"
+        if [ $rnms -eq 1 ]; then
+            insertInto sucelja
+        fi
+    done
+}
+
+pingaj () {
+    counter=$1
+    previse=$2
+    izgubljeniPaketi=$(ping -W 3 -c 1 $ip | grep loss | awk '{print $6}' | sed 's/%//g')
+    case $izgubljeniPaketi in
+        0)
+            status="OK (ICMP)"
+            echo " UREDAJ $ip: $status"
+            if [ $rnms -eq 1 ]; then
+                insertInto uredjaji
+            fi
+        ;;
+        100)
+            counter=$(( $counter + 1 ))
+            if [ "$counter" -lt "$previse" ]
+                then pingaj $counter $previse
+            else
+                status="nije OK (ICMP)"
+                echo " UREDAJ $ip: $status"
+            fi
+        ;;
+    esac
+}
+
+rnms () {
+    rnms=1
+    IFS=$'\n'
+    uredjajiSNMP=$(su - postgres -c "psql rnms -c \"copy (select * from uredjaji where snmp='da') to STDOUT WITH CSV HEADER;\"" | tail -n +2 | sed 's/\"//g')
+    for line in $uredjajiSNMP;do
+        uredjajID=$(echo $line | awk -F , '{print $1}')
+        ip=$(echo $line | awk -F , '{print $2}')
+        community=$(echo $line | awk -F , '{print $8}')
+        checkNodeStatus
+        interfaces=$(su - postgres -c "psql rnms -c \"copy (select * from sucelja where nodeid='$uredjajID') to STDOUT WITH CSV HEADER;\"" | tail -n +2 |  sed 's/\"//g' | sort | uniq)
+        if [[ "$status" == "OK (SNMP)" ]]; then
+            for sucelje in $interfaces; do
+                suceljeID=$(echo $sucelje | awk -F , '{print $1}')
+                ifName=$(echo $sucelje | awk -F , '{print $4}')
+                ifIndex=$(echo $sucelje | awk -F , '{print $3}')
+                #ifAdminStatus=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.7.$ifIndex | awk -F "INTEGER: " '{print $2}' )
+                ifOperStatus=$(snmpget -m+IF-MIB -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.8.$ifIndex  | awk -F "INTEGER: " '{print $2}')
+                if [ -z $ifOperStatus ]; then
+                    ifOperStatus="nepoznat"
+                fi
+                echo "  - sucelje ${ifName} (index $ifIndex) | operativni status: $ifOperStatus"
+                insertInto sucelja
+            done
+        else
+            for sucelje in $interfaces; do
+                suceljeID=$(echo $sucelje | awk -F , '{print $1}');
+                ifOperStatus="nepoznat"
+                echo "  - sucelje ${ifName} (index $index) | operativni status: $ifOperStatus"
+                ifIndex=$(echo $sucelje | awk -F , '{print $3}')
+                insertInto sucelja
+            done
+        fi
+    done
+    uredjajiNonSNMP=$(su - postgres -c "psql rnms -c \"copy (select * from uredjaji where snmp='ne') to STDOUT WITH CSV HEADER;\"" | tail -n +2 | sed 's/\"//g')
+    for line in $uredjajiNonSNMP;do
+        uredjajID=$(echo $line | awk -F , '{print $1}')
+        ip=$(echo $line | awk -F , '{print $2}')
+        #previse je varijabla koja simbolizira broj izgubljenih paketa zaredom nakon koje ce node prozvati nedostupnim
+        pingaj 0 2 2>/dev/null && insertInto uredjaji
+    done
+    unset IFS	
+}
+
+if [ -z $1 ]; then
+    rnms
+else
+    rnms=0
+    ip=$1
+    community=$2
+    checkNodeStatus || pingaj 0 2
+fi
