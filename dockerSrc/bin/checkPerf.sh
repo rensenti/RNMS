@@ -3,10 +3,10 @@
 azurirajBazu () {
     if [ $rnms -eq 1 ]; then
         pollingSek=$(( $polling * 60))
-        baza=/RNMS/rrdb/$id-$ip/$ifName.rrdb
+        baza=/RNMS/rrdb/$id-$ip/$ifNameURLFriendly.rrdb
     else
         pollingSek=10
-        baza=/RNMS/rrdb/na-zahtjev/${ip}_${ifName}.rrdb
+        baza=/RNMS/rrdb/na-zahtjev/${ip}_${ifNameURLFriendly}.rrdb
     fi
     heartbeat=$(( $pollingSek * 3 ))
     if [ ! -f "$baza" ]; then
@@ -30,7 +30,7 @@ narisiGraf () {
     if [ ! -d $graphDir ]; then
         mkdir -p $graphDir;
     fi
-    graf=$graphDir/${ip}_${ifName}.png
+    graf=$graphDir/${ip}_${ifNameURLFriendly}.png
     granulacija=$(( $pollingSek / 2 ))
     rrdtool graph \
             $graf \
@@ -66,7 +66,7 @@ narisiGraf () {
             LINE2:ifOutErrors#E50008:"Erorrs out" \
             LINE3:ifInDiscards#E54A00:"Discards in" \
             LINE4:ifOutDiscards#E59C00:"Discards out" > /dev/null 2>&1
-    echo "   -kreiran ili azuriran RRDTOOL graf: $URL/${ip}_${ifName}.png"
+    echo "   -kreiran ili azuriran RRDTOOL graf: $URL/${ip}_${ifNameURLFriendly}.png"
  }
 
 preuzmiPerfPodatke () {
@@ -87,6 +87,7 @@ rnmsOpseg () {
         ip=$(su - postgres -c "psql rnms -c \"copy (select ip from uredjaji where id="$id")  to STDOUT WITH CSV HEADER;\"" | tail -1)
         community=$(su - postgres -c "psql rnms -c \"copy (select community from uredjaji where id="$id")  to STDOUT WITH CSV HEADER;\"" | tail -1)
         ifName=$(echo $sucelje | awk -F , '{print $4}')
+        ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
         ifIndex=$(echo $sucelje | awk -F , '{print $3}')
         preuzmiPerfPodatke && azurirajBazu && narisiGraf
     done
@@ -98,6 +99,7 @@ interaktivniOpseg () {
     ifIndexi=$(snmpwalk -On -v2c -c $community $ip 1.3.6.1.2.1.2.2.1.1 | awk -F "\: " '{print $2}')
     for ifIndex in $ifIndexi; do
         ifName=$(snmpget -v2c -c $community $ip 1.3.6.1.2.1.31.1.1.1.1.${ifIndex} | awk -F "\: " '{print $2}' | awk -F \" '{print $2}')
+        ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
         ifOperStatus=$(snmpget -m+IF-MIB -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.8.$ifIndex  | awk -F "INTEGER: " '{print $2}')
         if [[ "$ifOperStatus" == "down(2)" ]]; then
             continue
