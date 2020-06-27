@@ -4,7 +4,7 @@ dockerBuild () {
 #       if [ ! -d $mount ]; then mkdir -p $mount; fi
         mkdir /var/opt/RNMS
         #docker run -dit --name rnms-dev -p 8080:80/tcp -p 2055:2055/udp --mount type=bind,source=$mount,target=/RNMS rnms:0.3
-        docker run -dit --name rnms -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS,target=/RNMS rnms:0.3
+        docker run -dit --name rnms --hostname RNMS-kontejner -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS,target=/RNMS rnms:0.3
         docker ps
         docker logs rnms
 }
@@ -15,7 +15,7 @@ dockerDestroy () {
 
 rnms () {
         if [ -z $1 ]; then
-                docker exec -i rnms /bin/bash
+                docker exec -it rnms /bin/bash
         else
                 docker exec -i rnms $@
         fi
