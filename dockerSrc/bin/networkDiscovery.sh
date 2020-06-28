@@ -1,7 +1,7 @@
 #!/bin/bash
 
 insertInto () {
-status='n/a'
+status='--'
 case $1 in
 	uredjaji)
 		su - postgres -c  "psql rnms -c \"insert into uredjaji (ip,hostname,systemname,snmp,tipuredjaja,status,community,netflow) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId','$status','$community','ne')\";"
@@ -38,7 +38,7 @@ getCards () {
 		entPhysicalClass=$(snmpget -m+ENTITY-MIB -On -v 2c -c $community $ip 1.3.6.1.2.1.47.1.1.1.1.5.${index}  | awk -F "\: " '{print $2}')
 		entPhysicalSerialNum=$(snmpget -m+ENTITY-MIB -On -v 2c -c $community $ip 1.3.6.1.2.1.47.1.1.1.1.11.${index}  | awk -F "\: " '{print $2}')
 		entPhysicalModelName=$(snmpget -m+ENTITY-MIB -On -v 2c -c $community $ip 1.3.6.1.2.1.47.1.1.1.1.13.${index}  | awk -F "\: " '{print $2}')
-		status="n/a"
+		status="--"
 		echo $ip - $entphysicalIndex - $entPhysicalName - $entPhysicalDescr - $entPhysicalClass - $entPhysicalSerialNum - $entPhysicalModelName
 		insertInto kartice
 	done
@@ -102,7 +102,7 @@ for ipRaspon in $@; do
 					SNMP=ne
 					sysObjectId=0
 					sysName=noSNMP
-					community='n/a'
+					community='--'
 					echo "UREDJAJ - $uredjaj - ne podrzava SNMP"
 					insertInto uredjaji
 					checkNode id && mkdir /RNMS/netflow/$nodeId

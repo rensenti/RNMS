@@ -1,5 +1,6 @@
 #!/bin/bash
-uredjaji=$(su - postgres -c "psql rnms -c \"copy (select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) ORDER BY deviceprofile.proizvodjac) to STDOUT WITH CSV HEADER;\"" | tail -n +2 | sed 's/\"//g')
+. pomagalice
+uredjaji=$(upitBaza "select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) ORDER BY deviceprofile.proizvodjac")
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo

@@ -5,9 +5,11 @@ set -e
 # ako nije prazan onda je RNMS vec bio pokrenut i vec ima strukturu (i podatke)
 if [ $(find $RNMS_PREFIX -type f | wc -l) -lt 2 ]; then
     cp -Rp /var/tmp/Src/* $RNMS_PREFIX/;
+    echo >> $RNMS_PREFIX/bin/pomagalice
     export -p >> $RNMS_PREFIX/bin/pomagalice
 fi
 . $RNMS_PREFIX/bin/pomagalice
+cp -f $RNMS_PREFIX/bin/pomagalice $RNMS_PREFIX/web_aplikacija/
 
 service cron start
 rm -f /usr/local/apache2/logs/httpd.pid

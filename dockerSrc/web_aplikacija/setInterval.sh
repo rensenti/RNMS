@@ -1,4 +1,5 @@
 #!/bin/bash
+. pomagalice
 POST_STRING=$(cat)
 
 changeCron () {
@@ -8,14 +9,14 @@ case $1 in
 	status)
 		crontab -l > $tmpCrontab;
 		grep -v Status $tmpCrontab > $tmpCrontab2;
-		echo "*/$getInterval * * * * /RNMS/bin/checkStatus.sh > /RNMS/log/checkStatus.log 2>&1" >> $tmpCrontab2;
+		echo "*/$getInterval * * * * $RNMS_PREFIX/bin/checkStatus.sh > $RNMS_PREFIX/log/checkStatus.log 2>&1" >> $tmpCrontab2;
 		crontab $tmpCrontab2
 		status=$(crontab -l)
 	;;
 	perf)
 		crontab -l > $tmpCrontab;
 		grep -v Perf $tmpCrontab > $tmpCrontab2;
-		echo "*/$getInterval * * * * /RNMS/bin/checkPerf.sh RNMS $getInterval\ >> /RNMS/log/checkPerf.log 2>&1" >> $tmpCrontab2;
+		echo "*/$getInterval * * * * $RNMS_PREFIX/bin/checkPerf.sh RNMS $getInterval\ >> $RNMS_PREFIX/log/checkPerf.log 2>&1" >> $tmpCrontab2;
 		crontab $tmpCrontab2
 		status=$(crontab -l)
 	;;
@@ -30,13 +31,13 @@ if [[ "$faultOrPerf" == "intervalFault" ]]; then
 	if [[ "$getInterval" != "nazahtjev" ]];then
 		changeCron status
 	else
-		status=$(/RNMS/bin/checkStatus.sh)
+		status=$($RNMS_PREFIX/bin/checkStatus.sh)
 	fi
 else
 	if [[ "$getInterval" != "nazahtjev" ]];then
 		changeCron perf
 	else
-		status=$(/RNMS/bin/checkPerf.sh RNMS 5)
+		status=$($RNMS_PREFIX/bin/checkPerf.sh RNMS 5)
 	fi
 fi
 

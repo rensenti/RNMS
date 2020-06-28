@@ -4,3 +4,15 @@ hostIP () {
     export RNMS_IP
     echo $RNMS_IP
 }
+upitBaza () {
+    su - postgres -c "psql rnms -c \"copy ($@) TO STDOUT WITH CSV HEADER;\"" | tail -n +2 | sed 's/\"//g'
+}
+upitBazaHeader () {
+    su - postgres -c "psql rnms -c \"copy ($@) TO STDOUT WITH CSV HEADER;\""
+}
+upitBazaVulgaris () {
+    su - postgres -c "psql rnms -c \"copy ($@) TO STDOUT;\""
+}
+unosBaza () {
+  su - postgres -c "psql rnms -c \"$@;\""
+}

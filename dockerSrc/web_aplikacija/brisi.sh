@@ -1,5 +1,7 @@
 #!/bin/bash
+. pomagalice
+
 echo "Content-Type: text/plain"
 echo
-/RNMS/bin/brisi.sh 2>&1
+$RNMS_PREFIX/bin/brisi.sh 2>&1
 

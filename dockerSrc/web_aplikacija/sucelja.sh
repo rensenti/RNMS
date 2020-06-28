@@ -1,29 +1,30 @@
 #!/bin/bash
-sucelja=$(su - postgres -c "psql rnms -c \"copy (select sucelja.id,uredjaji.ip,sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype,sucelja.status,sucelja.nodeid,sucelja.ip_adresa from sucelja inner join uredjaji on (nodeid = uredjaji.id) ORDER BY uredjaji.ip,sucelja.ifname)  to STDOUT WITH CSV HEADER;\"" | tail -n +2)
+. pomagalice
+sucelja=$(upitBaza "select sucelja.id,uredjaji.ip,sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype,sucelja.status,sucelja.nodeid,sucelja.ip_adresa from sucelja inner join uredjaji on (nodeid = uredjaji.id) ORDER BY uredjaji.ip,sucelja.ifname")
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
 echo "<html>"
 echo "<head>"
-echo " <meta charset="UTF-8">"
-echo " <title>RNMS sučelja</title>"
-echo " <link rel="stylesheet" href="style.css">"
+echo "	<meta charset="UTF-8">"
+echo "	<title>RNMS sučelja</title>"
+echo "	<link rel="stylesheet" href="style.css">"
 echo "</head>"
 echo "<body>"
 
 echo "<p class="small"><a href="index.sh"> < RNMS početna</a></p><h1>SUČELJA</h1>"
 echo "<table>"
- echo "<thead>"
- echo " <tr>"
- echo "  <th>Uredaj</th>"
- echo "  <th>Sučelje</th>"
- echo "  <th>IP adresa</th>"
- echo "  <th>Opis sučelja</th>"
- echo "  <th>L2 adresa</th>"
- echo "  <th>Tip sučelja</th>"
- echo "<th>Status</th>"
- echo " </tr>"
- echo "</thead>"
+echo "<thead>"
+echo "<tr>"
+echo "  <th>Uredaj</th>"
+echo "  <th>Sučelje</th>"
+echo "  <th>IP adresa</th>"
+echo "  <th>Opis sučelja</th>"
+echo "  <th>L2 adresa</th>"
+echo "  <th>Tip sučelja</th>"
+echo "<th>Status</th>"
+echo " </tr>"
+echo "</thead>"
 for line in $sucelja; do 
 	nodeId=$(echo $line | awk -F , '{print $8}');
 	nodeIP=$(echo $line | awk -F , '{print $2}');
@@ -36,16 +37,14 @@ for line in $sucelja; do
 	status=$(echo $line | awk -F , '{print $7}');
 	ipAdresa=$(echo $line | awk -F , '{print $9}');
 	echo "<tr>"; 
-	echo "<td>$nodeIP</td>";
-	echo "<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifName}.png\"</td>";
-	echo "<td>$ipAdresa</td>";
-	echo "<td>$ifAlias</td>";
-	echo "<td>$ifPhysAddress</td>";
-	echo "<td>$ifType</td>";
-	echo "<td>$status</td>";
+	echo "	<td>$nodeIP</td>";
+	echo "	<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifName}.png\"</td>";
+	echo "	<td>$ipAdresa</td>";
+	echo "	<td>$ifAlias</td>";
+	echo "	<td>$ifPhysAddress</td>";
+	echo "	<td>$ifType</td>";
+	echo "	<td>$status</td>";
 	echo "</tr>"; 
 done
-
-
 echo "</table>"
 echo "</html>"

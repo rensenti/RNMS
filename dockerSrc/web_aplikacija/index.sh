@@ -1,13 +1,13 @@
 #!/bin/bash
-neOKuredjaja=$(su - postgres -c "psql rnms -c \"copy (select count(distinct uredjaji.ip) from uredjaji where status like 'notOK%') TO STDOUT WITH CSV HEADER;\"" | grep -Po '\d*')
-neOKsucelja=$(su - postgres -c "psql rnms -c \"copy (select count(distinct sucelja.id) from sucelja where status like 'down%') TO STDOUT WITH CSV HEADER;\"" | grep -Po '\d*')
-sucelja=$(su - postgres -c "psql rnms -c \"copy (select sucelja.id,uredjaji.ip as \"IP_NODEA\",sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype from sucelja inner join uredjaji on (nodeid = uredjaji.id) )  to STDOUT WITH CSV HEADER;\"")
-brojSucelja=$(su - postgres -c "psql rnms -c \"copy (select count(distinct sucelja.id) from sucelja) TO STDOUT WITH CSV HEADER;\"" | grep -Po '\d*')
-brojUredjaja=$(su - postgres -c "psql rnms -c \"copy (select count(distinct uredjaji.ip) from uredjaji) TO STDOUT WITH CSV HEADER;\"" | grep -Po '\d*')
+. pomagalice
+neOKuredjaja=$(upitBaza "select count(distinct uredjaji.ip) from uredjaji where status like 'nije OK%'")
+neOKsucelja=$(upitBaza "select count(distinct sucelja.id) from sucelja where status like 'down%'")
+brojSucelja=$(upitBaza "select count(distinct sucelja.id) from sucelja")
+brojUredjaja=$(upitBaza "select count(distinct uredjaji.ip) from uredjaji")
 statusPoll=$(crontab -l | grep Status | grep -v '#' | awk -F '*' '{print $2}' | grep -Po '\d*')
 perfPoll=$(crontab -l | grep Perf | grep -v '#' | awk -F '*' '{print $2}' | grep -Po '\d*')
-suceljaPerf=$(ls /RNMS/rrdb/*rrd | wc -l)
-netflowExporters=$(su - postgres -c "psql rnms -c \"copy (select count(distinct uredjaji.ip) from uredjaji where netflow='da') TO STDOUT WITH CSV HEADER;\"" | grep -Po '\d*')
+suceljaPerf=$(find $RNMS_PREFIX/rrdb | grep -vc zahtjev)
+netflowExporters=$(upitBaza "select count(distinct uredjaji.ip) from uredjaji where netflow='da'")
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
