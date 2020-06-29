@@ -1,12 +1,12 @@
 #!/bin/bash
-
+. pomagalice
 insertInto () {
 case $1 in
     uredjaji)
-        su - postgres -c  "psql rnms -c \"update uredjaji set status='$status' where id='$uredjajID'\";" | grep -v UPDATE
+        unosBaza "update uredjaji set status='$status' where id='$uredjajID'" > /dev/null 2>&1
         ;;
     sucelja)
-        su - postgres -c  "psql rnms -c \"update sucelja set status='$ifOperStatus' where id='$suceljeID'\";"  | grep -v UPDATE
+        unosBaza "update sucelja set status='$ifOperStatus' where id='$suceljeID'" > /dev/null 2>&1
         ;;
 esac
 }
@@ -74,13 +74,13 @@ pingaj () {
 rnms () {
     rnms=1
     IFS=$'\n'
-    uredjajiSNMP=$(su - postgres -c "psql rnms -c \"copy (select * from uredjaji where snmp='da') to STDOUT WITH CSV HEADER;\"" | tail -n +2 | sed 's/\"//g')
+    uredjajiSNMP=$(upitBaza "select * from uredjaji where snmp='da'")
     for line in $uredjajiSNMP;do
         uredjajID=$(echo $line | awk -F , '{print $1}')
         ip=$(echo $line | awk -F , '{print $2}')
         community=$(echo $line | awk -F , '{print $8}')
         checkNodeStatus
-        interfaces=$(su - postgres -c "psql rnms -c \"copy (select * from sucelja where nodeid='$uredjajID') to STDOUT WITH CSV HEADER;\"" | tail -n +2 |  sed 's/\"//g' | sort | uniq)
+        interfaces=$(upitBaza "select * from sucelja where nodeid='$uredjajID'")
         if [[ "$status" == "OK (SNMP)" ]]; then
             for sucelje in $interfaces; do
                 suceljeID=$(echo $sucelje | awk -F , '{print $1}')
@@ -104,7 +104,7 @@ rnms () {
             done
         fi
     done
-    uredjajiNonSNMP=$(su - postgres -c "psql rnms -c \"copy (select * from uredjaji where snmp='ne') to STDOUT WITH CSV HEADER;\"" | tail -n +2 | sed 's/\"//g')
+    uredjajiNonSNMP=$(upitBaza "select * from uredjaji where snmp='ne'")
     for line in $uredjajiNonSNMP;do
         uredjajID=$(echo $line | awk -F , '{print $1}')
         ip=$(echo $line | awk -F , '{print $2}')

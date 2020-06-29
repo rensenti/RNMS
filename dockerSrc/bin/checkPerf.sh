@@ -1,5 +1,5 @@
 #!/bin/bash
-
+. pomagalice
 azurirajBazu () {
     if [ $rnms -eq 1 ]; then
         pollingSek=$(( $polling * 60))
@@ -80,12 +80,12 @@ preuzmiPerfPodatke () {
 }
 
 rnmsOpseg () {
-    sucelja=$(su - postgres -c "psql rnms -c \"copy (select * from sucelja where status='up(1)' AND iftype='ethernetCsmacd(6)' order by nodeid)  to STDOUT WITH CSV HEADER;\"" | tail -n +2)
+    sucelja=$(upitBaza "select * from sucelja where status='up(1)' AND (iftype='ethernetCsmacd(6)' OR iftype='ieee80211(71)' OR iftype='bridge(209)' OR iftype='propPointToPointSerial(22)') order by nodeid")
     IFS=$'\n'
     for sucelje in $sucelja; do
         id=$(echo $sucelje | awk -F , '{print $2}')
-        ip=$(su - postgres -c "psql rnms -c \"copy (select ip from uredjaji where id="$id")  to STDOUT WITH CSV HEADER;\"" | tail -1)
-        community=$(su - postgres -c "psql rnms -c \"copy (select community from uredjaji where id="$id")  to STDOUT WITH CSV HEADER;\"" | tail -1)
+        ip=$(upitBaza "select ip from uredjaji where id=$id")
+        community=$(upitBaza "select community from uredjaji where id=$id")
         ifName=$(echo $sucelje | awk -F , '{print $4}')
         ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
         ifIndex=$(echo $sucelje | awk -F , '{print $3}')
@@ -95,7 +95,6 @@ rnmsOpseg () {
 }
 
 interaktivniOpseg () {
-
     ifIndexi=$(snmpwalk -On -v2c -c $community $ip 1.3.6.1.2.1.2.2.1.1 | awk -F "\: " '{print $2}')
     for ifIndex in $ifIndexi; do
         ifName=$(snmpget -v2c -c $community $ip 1.3.6.1.2.1.31.1.1.1.1.${ifIndex} | awk -F "\: " '{print $2}' | awk -F \" '{print $2}')

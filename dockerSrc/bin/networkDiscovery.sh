@@ -1,16 +1,16 @@
 #!/bin/bash
-
+. pomagalice
 insertInto () {
 status='--'
 case $1 in
 	uredjaji)
-		su - postgres -c  "psql rnms -c \"insert into uredjaji (ip,hostname,systemname,snmp,tipuredjaja,status,community,netflow) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId','$status','$community','ne')\";"
+		unosBaza "insert into uredjaji (ip,hostname,systemname,snmp,tipuredjaja,status,community,netflow) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId','$status','$community','ne')"
 	;;
 	sucelja)
-		su - postgres -c  "psql rnms -c \"insert into sucelja (nodeid,ifindex,ifname,ifalias,iftype,ifphysaddress,status,ip_adresa) VALUES ('$nodeId','$index','$ifName','$ifAlias','$ifType','$ifPhysAddress','$status','$ipAddr')\";"
+		unosBaza "insert into sucelja (nodeid,ifindex,ifname,ifalias,iftype,ifphysaddress,status,ip_adresa) VALUES ('$nodeId','$index','$ifName','$ifAlias','$ifType','$ifPhysAddress','$status','$ipAddr')"
 	;;
 	kartice)
-		su - postgres -c  "psql rnms -c \"insert into kartice (nodeid,entphysicalindex,entphysicalname,entphysicaldescr,entphysicalclass,entphysicalserialnum,entphysicalmodelname,status) VALUES ('$nodeId','$entphysicalIndex','$entityPhysicalName','$entPhysicalDescr','$entPhysicalClass','$entPhysicalSerialNum','$entPhysicalModelName','$status')\";"
+		unosBaza "insert into kartice (nodeid,entphysicalindex,entphysicalname,entphysicaldescr,entphysicalclass,entphysicalserialnum,entphysicalmodelname,status) VALUES ('$nodeId','$entphysicalIndex','$entityPhysicalName','$entPhysicalDescr','$entPhysicalClass','$entPhysicalSerialNum','$entPhysicalModelName','$status')"
 	;;
 esac
 unset IFS
@@ -19,10 +19,10 @@ unset IFS
 checkNode () {
 case $1 in
 	ima)
-		ima=$(su - postgres -c "psql rnms -c \"copy (select * from uredjaji where ip='$ip') to STDOUT;\"" | wc -l)
+		ima=$(upitBaza "select * from uredjaji where ip='$ip'" | wc -l)
 	;;
 	id)
-		nodeId=$(su - postgres -c "psql rnms -c \"copy (select id from uredjaji where ip='$ip') to STDOUT;\"" | head -1)
+		nodeId=$(upitBaza "select id from uredjaji where ip='$ip'" | head -1)
 	;;
 esac
 }
@@ -81,7 +81,7 @@ for ipRaspon in $@; do
 		echo "OTKRIVEN UREDJAJ - $uredjaj"
 		# ako uredjaj s istim IP-em postoji u bazi preskoci na iduci
 		checkNode ima
-		if [[ "$ima" -ge "1" ]]; then
+		if [ $ima -ge 1 ]; then
 			echo "uredjaj vec postoji u bazi"
 			# nastavi s iducim uredjajem - preskoci
 			continue;

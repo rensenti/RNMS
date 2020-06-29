@@ -1,4 +1,5 @@
 #!/bin/bash
+. pomagalice
 POST_STRING=$(cat)
 # iz HTTP POSTa izvuci parametar za discovery skriptu
 raspon=$(echo $POST_STRING | sed 's/range=/ /g' | sed 's/&subnet=/\//g' | sed 's/community=//' | sed 's/\&/,/g' | sed 's/,START\=//g')
@@ -23,5 +24,5 @@ echo "<div class="term">"
 echo -e "Otkrivanje mreze za $raspon inicirano<br>"
 #echo -e "$disco" | sed 's/$/<br>/g'
 echo
-/RNMS/bin/networkDiscovery.sh $raspon 2>&1 |  grep -v awk | sed 's/$/\<br\>\<br\>/g'
+$RNMS_PREFIX/bin/networkDiscovery.sh $raspon 2>&1 |  grep -v awk | sed 's/$/\<br\>\<br\>/g'
 echo "</html>"

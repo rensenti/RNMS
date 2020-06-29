@@ -14,7 +14,7 @@ echo "<body>"
 echo "<p class="small"><a href="index.sh">< RNMS početna</a></p><h1>NETFLOW KONFIGURACIJA</h1>"
 echo "<section id="forma">"
 echo "<div class="container">"
-echo "<form class="forma" action="startNetflow.sh" method="post">"
+echo "<form class="forma" action="configureNetflow.sh" method="post">"
 
  echo "<table>" 
  echo "<thead>"
