@@ -13,15 +13,15 @@ azurirajBazu () {
         mkdir -p $baza && rmdir $baza # :)
         rrdtool create $baza \
             --step $pollingSek \
-                DS:ifInOctets:COUNTER:$heartbeat:U:U \
-                DS:ifOutOctets:COUNTER:$heartbeat:U:U \
+                DS:savDolazni:COUNTER:$heartbeat:U:U \
+                DS:savOdlazni:COUNTER:$heartbeat:U:U \
                 DS:ifInErrors:COUNTER:$heartbeat:U:U \
                 DS:ifOutErrors:COUNTER:$heartbeat:U:U \
                 DS:ifInDiscards:COUNTER:$heartbeat:U:U \
                 DS:ifOutDiscards:COUNTER:$heartbeat:U:U \
                 RRA:AVERAGE:0.5:1:300
     fi
-    rrdtool update $baza $vrijeme:$ifInOctets:$ifOutOctets:$ifInErrors:$ifOutErrors:$ifInDiscards:$ifOutDiscards
+    rrdtool update $baza $vrijeme:$savDolazni:$savOdlazni:$ifInErrors:$ifOutErrors:$ifInDiscards:$ifOutDiscards
     echo " -sucelje ${ifName} (index $ifIndex):"
     echo "   -kreirana ili azurirana RRDTOOL baza podataka: $baza"
 }
@@ -53,26 +53,39 @@ narisiGraf () {
             -c "BACK#000000"\
             -l 0 \
             -a PNG \
-            -v "B" \
-            DEF:ifInOctets=$baza:ifInOctets:AVERAGE \
-            DEF:ifOutOctets=$baza:ifOutOctets:AVERAGE \
+            -v "bps" \
+            DEF:savDolazni=$baza:savDolazni:AVERAGE \
+            DEF:savOdlazni=$baza:savOdlazni:AVERAGE \
             DEF:ifInErrors=$baza:ifInErrors:AVERAGE \
             DEF:ifOutErrors=$baza:ifOutErrors:AVERAGE \
             DEF:ifInDiscards=$baza:ifInDiscards:AVERAGE \
             DEF:ifOutDiscards=$baza:ifOutDiscards:AVERAGE \
-            AREA:ifInOctets#00FF00:"Unutarnji promet" \
-            AREA:ifOutOctets#0000FF:"Vanjski promet" \
-            LINE1:ifInErrors#E5003D:"Errors in" \
-            LINE2:ifOutErrors#E50008:"Erorrs out" \
-            LINE3:ifInDiscards#E54A00:"Discards in" \
-            LINE4:ifOutDiscards#E59C00:"Discards out" > /dev/null 2>&1
+            LINE1:savDolazni#FFFFFF:"Dolazni promet" \
+            LINE2:savOdlazni#00FF00:"Odlazni promet" \
+            LINE3:ifInErrors#E5003D:"Errors in" \
+            LINE4:ifOutErrors#E50008:"Erorrs out" \
+            LINE5:ifInDiscards#E54A00:"Discards in" \
+            LINE6:ifOutDiscards#E59C00:"Discards out" > /dev/null 2>&1
     echo "   -kreiran ili azuriran RRDTOOL graf: $URL/${ip}_${ifNameURLFriendly}.png"
  }
 
 preuzmiPerfPodatke () {
     vrijeme=$(date +%s)
-    ifInOctets=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.10.${ifIndex} | awk -F "Counter32: " '{print $2}')
-    ifOutOctets=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.16.${ifIndex} | awk -F "Counter32: " '{print $2}')
+    # ifInOctets=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.10.${ifIndex} | awk -F "Counter32: " '{print $2}')
+    # ifOutOctets=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.16.${ifIndex} | awk -F "Counter32: " '{print $2}')
+    # DOLAZNI
+    ifHCInOctets=$(snmpget -m all -v 2c -c $community $ip ifHCInOctets.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    ifHCInUcastPkts=$(snmpget -m all -v 2c -c $community $ip ifHCInUcastPkts.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    ifHCInMulticastPkts=$(snmpget -m all -v 2c -c $community $ip ifHCInMulticastPkts.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    ifHCInBroadcastPkts=$(snmpget -m all -v 2c -c $community $ip ifHCInBroadcastPkts.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    savDolazni=$(( $ifHCInOctets + $ifHCInUcastPkts + $ifHCInMulticastPkts + $ifHCInBroadcastPkts ))
+    # ODLAZNI
+    ifHCOutOctets=$(snmpget -m all -v 2c -c $community $ip ifHCOutOctets.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    ifHCOutUcastPkts=$(snmpget -m all -v 2c -c $community $ip ifHCOutUcastPkts.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    ifHCOutMulticastPkts=$(snmpget -m all -v 2c -c $community $ip ifHCOutMulticastPkts.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    ifHCOutBroadcastPkts=$(snmpget -m all -v 2c -c $community $ip ifHCOutBroadcastPkts.${ifIndex} | awk -F "Counter64: " '{print $2}')
+    savOdlazni=$(( $ifHCOutOctets + $ifHCOutUcastPkts + $ifHCOutMulticastPkts + $ifHCOutBroadcastPkts ))
+    # GRIJEŠKE
     ifInErrors=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.14.${ifIndex} | awk -F "Counter32: " '{print $2}')
     ifOutErrors=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.18.${ifIndex} | awk -F "Counter32: " '{print $2}')
     ifInDiscards=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.13.${ifIndex} | awk -F "Counter32: " '{print $2}')
