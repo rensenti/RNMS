@@ -43,8 +43,8 @@ for line in $uredjaji; do
 	model=$(echo $line | awk -F , '{print $6}')
 	netflow=$(echo $line | awk -F , '{print $9}')
 	echo "<tr>";
-	#echo "<td><a href="reconfigure.sh%20${nodeId}" class="table">$nodeIP</a></td>";
-	echo "<td><form action="details.sh" method="post"><button type="submit" name="nodeId" value="$nodeId" class="skrivena_forma">$nodeIP</button></form></td>"
+	#echo "<td><form action="details.sh" method="post"><button type="submit" name="nodeId" value="$nodeId" class="skrivena_forma">$nodeIP</button></form></td>"
+	echo "<td><a href="details.sh?id=${nodeId}" class="table">$nodeIP</a></td>"
 	echo "<td>$nodeHostname</td>";
 	echo "<td>$nodeSystemname</td>";
 	echo "<td>$SNMP</td>";

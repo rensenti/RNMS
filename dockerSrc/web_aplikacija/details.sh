@@ -1,6 +1,10 @@
 #!/bin/bash
 . pomagalice
-id=$(cat | awk -F "=" '{print $2}')
+if [ -z $QUERY_STRING ]; then
+    id=$(cat | awk -F "=" '{print $2}')
+else
+    id=$(echo $QUERY_STRING | awk -F "&" '{print $1}' | awk -F = '{print $2}')
+fi
 uredjaj=$(upitBaza "select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) where uredjaji.id="$id" ORDER BY deviceprofile.proizvodjac")
 sucelja=$(upitBaza "select sucelja.id,uredjaji.ip,sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype,sucelja.status,sucelja.nodeid,sucelja.ip_adresa from sucelja inner join uredjaji on (nodeid = uredjaji.id) where sucelja.nodeid="$id" ORDER BY uredjaji.ip,sucelja.ifname")
 IFS=$'\n'
@@ -94,7 +98,7 @@ if [ "$netflow" == "da" ]; then
     prije15min=$(date -d "-15 minutes" +%Y/%m/%d.%H:%M:%S)
     sad=$(date +%Y/%m/%d.%H:%M:%S)
     vrijemenskaDimenzija="${prije15min}-${sad}"
-    echo "<b>Statistika o suceljima</b>:<br><br>DOLAZNI PROMET:<br><br>"
+    echo "<b>Statistika o suceljima</b>:<br><br>DOLAZNA SUČELJA:<br><br>"
     echo "<table>"
     echo "<thead>"
     echo "<tr>"
@@ -126,7 +130,7 @@ if [ "$netflow" == "da" ]; then
     done
     unset IFS;
     echo "</table>"
-    echo "ODLAZNI PROMET:<br><br>"
+    echo "ODLAZNA SUČELJA:<br><br>"
     echo "<table>"
     echo "<thead>"
     echo "<tr>"
