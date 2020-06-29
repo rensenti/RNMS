@@ -25,16 +25,3 @@ brisiNode () {
     rm -f $RNMS_PREFIX/web_aplikacija/slike/perfGrafovi/${ip}_*
     rm -rf $RNMS_PREFIX/rrdb/${id}-${ip}
 }
-
-declare -x HOME="/root"
-declare -x HOSTNAME="RNMS-kontejner"
-declare -x HTTPD_DOWNLOAD_URL="http://njahaha.net/RNMS/httpd.tar.bz2"
-declare -x HTTPD_PREFIX="/RNMS/apache"
-declare -x LANG="en_US.UTF-8"
-declare -x OLDPWD
-declare -x PATH="/RNMS/bin:/RNMS/apache/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
-declare -x PWD="/RNMS"
-declare -x RNMS_PREFIX="/RNMS"
-declare -x SHLVL="1"
-declare -x TERM="xterm"
-declare -x TZ="Europe/Zagreb"
