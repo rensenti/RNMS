@@ -65,13 +65,13 @@ echo "  <th>IP adresa</th>"
 echo "  <th>Opis sučelja</th>"
 echo "  <th>L2 adresa</th>"
 echo "  <th>Tip sučelja</th>"
-echo "<th>Status</th>"
+echo "  <th>Status</th>"
 echo "</tr>"
 echo "</thead>"
 for line in $sucelja; do
     ifName=$(echo $line | awk -F , '{print $3}');
-    longUuid=$(echo $nodeIP-$ifNamef | sha1sum);
-    uuid=${longUuid:0:20}
+    # longUuid=$(echo $nodeIP-$ifNamef | sha1sum);
+    # uuid=${longUuid:0:20}
     ifAlias=$(echo $line | awk -F , '{print $4}');
     ifPhysAddress=$(echo $line | awk -F , '{print $5}');
     ifType=$(echo $line | awk -F , '{print $6}');
@@ -87,19 +87,73 @@ for line in $sucelja; do
     echo "</tr>";
 done
 echo "</table>"
+
 echo "<h3>NetFlow podaci</h3>"
 echo "<div class="krugi">"
 if [ "$netflow" == "da" ]; then
-    echo "<b>Statistika o suceljima</b>:<br><br>"
-    IFS=$'\n';
+    prije15min=$(date -d "-15 minutes" +%Y/%m/%d.%H:%M:%S)
+    sad=$(date +%Y/%m/%d.%H:%M:%S)
+    vrijemenskaDimenzija="${prije15min}-${sad}"
+    echo "<b>Statistika o suceljima</b>:<br><br>DOLAZNI PROMET:<br><br>"
     echo "<table>"
-    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s if -o csv | head -n-4); do
+    echo "<thead>"
+    echo "<tr>"
+    echo "  <th>Početni flow</th>" # ts
+    echo "  <th>Posljednji flow</th>" # te
+    echo "  <th>Trajanje</th>" # td
+    echo "  <th>Protokol</th>" # pr
+    echo "  <th>Ulazno sučelje</th>" # val
+    echo "  <th>Broj tokova</th>" # fl
+    echo "  <th>Postotak tokova</th>" # flP
+    echo "  <th>Broj paketa</th>" # ipkt
+    echo "  <th>Postotak paketa</th>" # ipktP
+    echo "  <th>Byte</th>" # ibyt
+    echo "  <th>Postotak byte</th>" # ibytP
+    echo "  <th>Broj paketa u sekundi</th>" # ipps
+    echo "  <th>Bit po sekundi (bps)</th>" # ipbs
+    echo "  <th>Byte po paketu</th>" # ibpp
+    echo "</tr>"
+    echo "</thead>"
+    IFS=$'\n';
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s inif -t $vrijemenskaDimenzija -o csv | head -n-4); do
         ifIndex=$(echo $line | awk -F , '{print $5}');
         ifName=$(upitBaza "select ifname from sucelja where ifindex='$ifIndex' and nodeid='$id'");
         if [ ! -z $ifName ]; then
-        echo "<tr>"
-        echo "$line" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
-        echo "</tr>"
+            echo "<tr>"
+            echo "$line" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+            echo "</tr>"
+        fi;
+    done
+    unset IFS;
+    echo "</table>"
+    echo "ODLAZNI PROMET:<br><br>"
+    echo "<table>"
+    echo "<thead>"
+    echo "<tr>"
+    echo "  <th>Početni flow</th>" # ts
+    echo "  <th>Posljednji flow</th>" # te
+    echo "  <th>Trajanje</th>" # td
+    echo "  <th>Protokol</th>" # pr
+    echo "  <th>Izlazno sučelje</th>" # val
+    echo "  <th>Broj tokova</th>" # fl
+    echo "  <th>Postotak tokova</th>" # flP
+    echo "  <th>Broj paketa</th>" # opkt
+    echo "  <th>Postotak paketa</th>" # opktP
+    echo "  <th>Byte</th>" # obyt
+    echo "  <th>Postotak byte</th>" # obytP
+    echo "  <th>Broj paketa u sekundi</th>" # opps
+    echo "  <th>Bit po sekundi (bps)</th>" # opbs
+    echo "  <th>Byte po paketu</th>" # obpp
+    echo "</tr>"
+    echo "</thead>"
+    IFS=$'\n';
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s outif -t $vrijemenskaDimenzija -o csv | head -n-4); do
+        ifIndex=$(echo $line | awk -F , '{print $5}');
+        ifName=$(upitBaza "select ifname from sucelja where ifindex='$ifIndex' and nodeid='$id'");
+        if [ ! -z $ifName ]; then
+            echo "<tr>"
+            echo "$line" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+            echo "</tr>"
         fi;
     done
     unset IFS;
@@ -108,7 +162,7 @@ if [ "$netflow" == "da" ]; then
     echo "<br><br>"
     echo "<div class="netflow">"
     echo "<b>Statistika o protokolima</b>:<br><br>"
-    echo $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -s proto |  sed 's/$/\<br\>\<br\>/g')
+    echo $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -s proto -t $vrijemenskaDimenzija |  sed 's/$/\<br\>\<br\>/g')
 else
     echo "Za navedeni uredjaj trenutno nema NetFlow podataka<br><br>"
 fi
