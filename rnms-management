@@ -22,9 +22,9 @@ rnms () {
 }
 
 rnmsHomeRecreateAndDiscover () {
-    rm -rf /var/opt/RNMS_volume/* && dockerDestroy && dockerBuild && rnms networkDiscovery.sh 10.13.37.2/32,rensenti 10.13.37.20/32,rensenti && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
+    rm -rf /var/opt/RNMS_volume/* && rnmsDestroy && rnmsBuildAndStart && rnms networkDiscovery.sh 10.13.37.2/32,rensenti 10.13.37.20/32,rensenti && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
 }
 
 rnmsOfficeRecreateAndDiscover () {
-    rm -rf /var/opt/RNMS_volume/* && dockerDestroy && dockerBuild && rnms networkDiscovery.sh 10.16.97.159/32,sntsnmpwifi1 10.88.88.21,public 10.88.88.22,public 10.88.88.23,public 10.88.88.24,public 10.88.88.10,public 10.88.88.11,public 10.88.88.12,public  && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
+    rm -rf /var/opt/RNMS_volume/* && rnmsDestroy && rnmsBuildAndStart && rnms networkDiscovery.sh 10.16.97.159/32,sntsnmpwifi1 10.88.88.21,public 10.88.88.22,public 10.88.88.23,public 10.88.88.24,public 10.88.88.10,public 10.88.88.11,public 10.88.88.12,public  && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
 }
