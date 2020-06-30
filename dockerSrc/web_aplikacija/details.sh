@@ -85,7 +85,7 @@ for line in $sucelja; do
     ipAdresa=$(echo $line | awk -F , '{print $9}');
     ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
     echo "<tr>";
-    echo "  <td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\>"</td>";
+    echo "  <td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
     echo "  <td>$ipAdresa</td>";
     echo "  <td>$ifAlias</td>";
     echo "  <td>$ifPhysAddress</td>";
