@@ -6,9 +6,11 @@ case $1 in
     uredjaji)
         unosBaza "insert into uredjaji (ip,hostname,systemname,snmp,tipuredjaja,status,community,netflow) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId','$status','$community','ne')"
         id=$(upitBaza "select id from uredjaji where ip like '$ip'")
-        echo "    - $ip je učitan u RNMS bazu podataka pod id: $id"
-        echo "      po završetku procesa mrežnog otkrivanja više detalja o uređaju će biti dostupno na:"
-        echo "      http://$RNMS_IP/details.sh?id=$id"
+        if [ ! -z $id ]; then
+            echo "    - $ip je učitan u RNMS bazu podataka pod id: $id"
+            echo "      po završetku procesa mrežnog otkrivanja više detalja o uređaju će biti dostupno na:"
+            echo "      http://$RNMS_IP/details.sh?id=$id"
+        fi
         echo
     ;;
     sucelja)
