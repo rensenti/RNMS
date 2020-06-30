@@ -9,7 +9,7 @@ case $1 in
 	status)
 		crontab -l > $tmpCrontab;
 		grep -v Status $tmpCrontab > $tmpCrontab2;
-		echo "*/$getInterval * * * * $RNMS_PREFIX/bin/checkStatus.sh > $RNMS_PREFIX/log/checkStatus.log 2>&1" >> $tmpCrontab2;
+		echo "*/$getInterval * * * * $RNMS_PREFIX/bin/checkStatus.sh >> $RNMS_PREFIX/log/checkStatus.log 2>&1" >> $tmpCrontab2;
 		crontab $tmpCrontab2
 		status=$(crontab -l)
 	;;
