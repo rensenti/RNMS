@@ -21,7 +21,6 @@ echo "<p class="small"><a href="index.sh">< RNMS početna</a></p><h1>RNMS - otkr
 echo "<p>"
 echo "<div class="krugi">"
 echo "<div class="term">"
-echo -e "Otkrivanje mreze za $raspon inicirano<br>"
 #echo -e "$disco" | sed 's/$/<br>/g'
 echo
 $RNMS_PREFIX/bin/networkDiscovery.sh $raspon 2>&1 |  grep -v awk | sed 's/$/\<br\>\<br\>/g'
