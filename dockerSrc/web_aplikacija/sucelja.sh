@@ -27,28 +27,28 @@ echo "<th>Status</th>"
 echo " </tr>"
 echo "</thead>"
 for line in $sucelja; do 
-	nodeId=$(echo $line | awk -F , '{print $8}');
-	nodeIP=$(echo $line | awk -F , '{print $2}');
-	ifName=$(echo $line | awk -F , '{print $3}');
-	longUuid=$(echo $nodeIP-$ifName | sha1sum);
-	uuid=${longUuid:0:20}
-	ifAlias=$(echo $line | awk -F , '{print $4}');
-	ifPhysAddress=$(echo $line | awk -F , '{print $5}');
-	ifType=$(echo $line | awk -F , '{print $6}');
-	status=$(echo $line | awk -F , '{print $7}');
-	ipAdresa=$(echo $line | awk -F , '{print $9}');
-	ifSpeed=$(echo $line | awk -F , '{print $10}');
+    nodeId=$(echo $line | awk -F , '{print $8}');
+    nodeIP=$(echo $line | awk -F , '{print $2}');
+    ifName=$(echo $line | awk -F , '{print $3}');
+    longUuid=$(echo $nodeIP-$ifName | sha1sum);
+    uuid=${longUuid:0:20}
+    ifAlias=$(echo $line | awk -F , '{print $4}');
+    ifPhysAddress=$(echo $line | awk -F , '{print $5}');
+    ifType=$(echo $line | awk -F , '{print $6}');
+    status=$(echo $line | awk -F , '{print $7}');
+    ipAdresa=$(echo $line | awk -F , '{print $9}');
+    ifSpeed=$(echo $line | awk -F , '{print $10}');
     ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
-	echo "<tr>"; 
-	echo "	<td>$nodeIP</td>";
-	echo "	<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
-	echo "	<td>$ipAdresa</td>";
-	echo "	<td>$ifAlias</td>";
-	echo "	<td>$ifPhysAddress</td>";
-	echo "	<td>$ifType</td>";
-	echo "	<td>$ifSpeed</td>";
-	echo "	<td>$status</td>";
-	echo "</tr>"; 
+    echo "<tr>"; 
+    echo "	<td>$nodeIP</td>";
+    echo "	<td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
+    echo "	<td>$ipAdresa</td>";
+    echo "	<td>$ifAlias</td>";
+    echo "	<td>$ifPhysAddress</td>";
+    echo "	<td>$ifType</td>";
+    echo "	<td>$ifSpeed</td>";
+    echo "	<td>$status</td>";
+    echo "</tr>"; 
 done
 echo "</table>"
 echo "</html>"

@@ -84,7 +84,7 @@ for line in $sucelja; do
     ifType=$(echo $line | awk -F , '{print $6}');
     status=$(echo $line | awk -F , '{print $7}');
     ipAdresa=$(echo $line | awk -F , '{print $9}');
-	ifSpeed=$(echo $line | awk -F , '{print $10}');
+    ifSpeed=$(echo $line | awk -F , '{print $10}');
     ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
     echo "<tr>";
     echo "  <td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
@@ -92,7 +92,7 @@ for line in $sucelja; do
     echo "  <td>$ifAlias</td>";
     echo "  <td>$ifPhysAddress</td>";
     echo "  <td>$ifType</td>";
-	echo "	<td>$ifSpeed</td>";
+    echo "	<td>$ifSpeed</td>";
     echo "  <td>$status</td>";
     echo "</tr>";
 done
