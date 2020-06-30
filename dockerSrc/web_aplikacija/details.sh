@@ -92,7 +92,7 @@ for line in $sucelja; do
     echo "  <td>$ifAlias</td>";
     echo "  <td>$ifPhysAddress</td>";
     echo "  <td>$ifType</td>";
-    echo "	<td>$ifSpeed</td>";
+    echo "  <td>$ifSpeed</td>";
     echo "  <td>$status</td>";
     echo "</tr>";
 done
