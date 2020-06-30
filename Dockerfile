@@ -1,4 +1,5 @@
-FROM debian:buster-slim
+#FROM debian:buster-slim
+FROM debian:stable-20200607-slim
 
 ENV RNMS_PREFIX /RNMS
 ENV HTTPD_PREFIX $RNMS_PREFIX/apache
@@ -98,6 +99,7 @@ COPY ./dockerSrc/web_aplikacija $RNMS_PREFIX/web_aplikacija
 COPY ./dockerSrc/bin $RNMS_PREFIX/bin
 COPY ./dockerSrc/conf/crontab /etc/cron.d/
 COPY ./dockerSrc/mibs /usr/share/snmp/mibs/
+COPY ./dockerSrc/conf/pomagalice $RNMS_PREFIX/
 
 # APACHE konfiguracija
 COPY ./dockerSrc/conf/httpd.conf $HTTPD_PREFIX/conf/httpd.conf
@@ -113,7 +115,8 @@ COPY ./dockerSrc/startRNMS.sh /usr/local/bin/
 RUN set -eux; \
         chown postgres:postgres "$RNMS_PREFIX/database" \
 	&& su - postgres -c "/usr/lib/postgresql/11/bin/initdb -D $RNMS_PREFIX/database" \
-	&& service postgresql start \
+	&& su - postgres -c "/usr/lib/postgresql/11/bin/pg_ctl -D $RNMS_PREFIX/database -l $RNMS_PREFIX/database/rnms_db.log start &" \
+	&& sleep 10 \
 	&& su - postgres -c "psql -c \"create database rnms\"" \
 	&& su - postgres -c "psql rnms < /tmp/rnms_db" \
 	&& rm -f /tmp/rnms_db \

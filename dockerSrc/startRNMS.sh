@@ -7,7 +7,9 @@ if [ $(find $RNMS_PREFIX -type f | wc -l) -lt 2 ]; then
     cp -Rp /var/tmp/Src/* $RNMS_PREFIX/;
     echo >> $RNMS_PREFIX/pomagalice
     export -p >> $RNMS_PREFIX/pomagalice
+    cp $RNMS_PREFIX/pomagalice $RNMS_PREFIX/bin/pomagalice
 fi
+cp $RNMS_PREFIX/pomagalice /root/
 . $RNMS_PREFIX/pomagalice
 
 service cron start

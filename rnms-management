@@ -22,7 +22,7 @@ rnms () {
 }
 
 rnmsHomeRecreateAndDiscover () {
-    rm -rf /var/opt/RNMS_volume/* && rnmsDestroy && rnmsBuildAndStart && rnms networkDiscovery.sh 10.13.37.2/32,rensenti 10.13.37.20/32,rensenti && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
+    docker stop rnms; rm -rf /var/opt/RNMS_volume/*;  rnmsDestroy && rnmsBuildAndStart && sleep 30 && rnms networkDiscovery.sh 10.13.37.2/32,rensenti && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
 }
 
 rnmsOfficeRecreateAndDiscover () {
