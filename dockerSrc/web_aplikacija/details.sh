@@ -1,5 +1,7 @@
 #!/bin/bash
 . pomagalice
+# ako je QUERY_STRING prazan izvuci id uredjaja iz POST
+# ako nije onda iz prvog parametra
 if [ -z $QUERY_STRING ]; then
     id=$(cat | awk -F "=" '{print $2}')
 else
