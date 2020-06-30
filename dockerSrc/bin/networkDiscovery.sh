@@ -12,7 +12,7 @@ case $1 in
         echo
     ;;
     sucelja)
-        unosBaza "insert into sucelja (nodeid,ifindex,ifname,ifalias,iftype,ifphysaddress,status,ip_adresa) VALUES ('$nodeId','$index','$ifName','$ifAlias','$ifType','$ifPhysAddress','$status','$ipAddr')"
+        unosBaza "insert into sucelja (nodeid,ifindex,ifname,ifalias,iftype,ifphysaddress,status,ip_adresa,ifspeed) VALUES ('$nodeId','$index','$ifName','$ifAlias','$ifType','$ifPhysAddress','$status','$ipAddr','$ifSpeed')"
         echo "      - $ifName sučelje (index: ${index}) s $uredjaj učitano u RNMS bazu podataka"
         echo
     ;;

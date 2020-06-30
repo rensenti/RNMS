@@ -158,7 +158,8 @@ CREATE TABLE sucelja (
     iftype text,
     ifphysaddress text,
     status text,
-    ip_adresa text
+    ip_adresa text,
+    ifspeed integer
 );
 
 

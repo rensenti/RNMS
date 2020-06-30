@@ -8,7 +8,7 @@ else
     id=$(echo $QUERY_STRING | awk -F "&" '{print $1}' | awk -F = '{print $2}')
 fi
 uredjaj=$(upitBaza "select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) where uredjaji.id="$id" ORDER BY deviceprofile.proizvodjac")
-sucelja=$(upitBaza "select sucelja.id,uredjaji.ip,sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype,sucelja.status,sucelja.nodeid,sucelja.ip_adresa from sucelja inner join uredjaji on (nodeid = uredjaji.id) where sucelja.nodeid="$id" ORDER BY uredjaji.ip,sucelja.ifname")
+sucelja=$(upitBaza "select sucelja.id,uredjaji.ip,sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype,sucelja.status,sucelja.nodeid,sucelja.ip_adresa,sucelja.ifspeed from sucelja inner join uredjaji on (nodeid = uredjaji.id) where sucelja.nodeid="$id" ORDER BY uredjaji.ip,sucelja.ifname")
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
@@ -71,6 +71,7 @@ echo "  <th>IP adresa</th>"
 echo "  <th>Opis sučelja</th>"
 echo "  <th>L2 adresa</th>"
 echo "  <th>Tip sučelja</th>"
+echo "  <th>Brzina sučelja (bps)</th>"
 echo "  <th>Status</th>"
 echo "</tr>"
 echo "</thead>"
@@ -83,6 +84,7 @@ for line in $sucelja; do
     ifType=$(echo $line | awk -F , '{print $6}');
     status=$(echo $line | awk -F , '{print $7}');
     ipAdresa=$(echo $line | awk -F , '{print $9}');
+	ifSpeed=$(echo $line | awk -F , '{print $10}');
     ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
     echo "<tr>";
     echo "  <td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
@@ -90,6 +92,7 @@ for line in $sucelja; do
     echo "  <td>$ifAlias</td>";
     echo "  <td>$ifPhysAddress</td>";
     echo "  <td>$ifType</td>";
+	echo "	<td>$ifSpeed</td>";
     echo "  <td>$status</td>";
     echo "</tr>";
 done
