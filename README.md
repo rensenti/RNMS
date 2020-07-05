@@ -13,7 +13,7 @@ Dijagram RNMS sustava (Docker kontejner)
         web     |               ^                     v                                                       v                   |
     +-----------+               |             +-------+---------------------+        +------------------------+----------------+  |
     v                           |             |  RNMS SHELL SKRIPTE ZA:     |        | RNMS FUNKCIJE:                          |  |
-korisnik                        +<----------> |   * GENERIRANJE HTML-A      | <----> | (SHELL SKRIPTE)                         |  |
+KORISNIK                        +<----------> |   * GENERIRANJE HTML-A      | <----> | (SHELL SKRIPTE)                         |  |
     ^                           |             |   * POZIVANJE RNMS FUNKCIJA |        |   * OTKRIVANJE MREŽE                    |  |
     +-----------+               |             |                             |    +-> |   * PROVJERA STATUSA                    |  |
       terminal  |               v             +-----------------------------+    |   |   * PROVJERA PERFORMANSI                |  |
