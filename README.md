@@ -1,5 +1,5 @@
 # RNMS
-RNMS je pokazni NMS sustav baziran na Open-Source software (OSS) alatima i aplikacijama. Dostupan je kao Docker kontejner na x86_x64 i armv7 platformama. Nije za produkcijsko korištenje.  Svrha iza razvoja ja bila kreirati vrlo bazični NMS sustav pomoću shell skripti koristeći isključivo OSS aplikacije dostupne u repozitorijima većine Linux distribucija i u tom procesu nešto naučiti. Sadrži nemale količine sigurnosnih kompromisa i ne-elegantnog koda. :)
+RNMS je pokazni NMS sustav baziran na Open-Source software (OSS) alatima i aplikacijama. Dostupan je kao Docker kontejner na x86_x64 i armv7 platformama. **Nije za produkcijsko korištenje**.  Svrha iza razvoja ja bila kreirati vrlo bazični NMS sustav pomoću shell skripti koristeći isključivo OSS aplikacije dostupne u repozitorijima većine Linux distribucija i u tom procesu nešto naučiti. Sadrži nemale količine sigurnosnih kompromisa i ne-elegantnog koda. :)
 ## Tablica sadržaja
 
 ## Dijagram RNMS sustava (Docker kontejner)
