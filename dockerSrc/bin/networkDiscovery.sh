@@ -4,7 +4,7 @@ insertInto () {
 status='--'
 case $1 in
     uredjaji)
-        unosBaza "insert into uredjaji (ip,hostname,systemname,snmp,tipuredjaja,status,community,netflow) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId','$status','$community','ne')"
+        unosBaza "insert into uredjaji (ip,hostname,systemname,snmp,tipuredjaja,status,community,netflow,routing) VALUES ('$ip','$hostname','$sysName','$SNMP','$sysObjectId','$status','$community','ne','ne')"
         id=$(upitBaza "select id from uredjaji where ip like '$ip'")
         if [ ! -z $id ]; then
             echo "    - $ip je učitan u RNMS bazu podataka pod id: $id"
