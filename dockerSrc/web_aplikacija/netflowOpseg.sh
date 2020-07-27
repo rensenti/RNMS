@@ -1,6 +1,6 @@
 #!/bin/bash
 . pomagalice
-uredjaji=$(upitBaza "select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) ORDER BY deviceprofile.proizvodjac")
+uredjaji=$(upitBaza "select uredjaji.id,uredjaji.ip,uredjaji.hostname,uredjaji.snmp,uredjaji.netflow from uredjaji ORDER BY uredjaji.id")
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
@@ -28,27 +28,22 @@ echo "<form class="forma" action="configureNetflow.sh" method="post">"
  echo "</thead>"
 
 for line in $uredjaji; do
-	nodeId=$(echo $line | awk -F , '{print $10}')
-	nodeIP=$(echo $line | awk -F , '{print $1}')
-	nodeHostname=$(echo $line | awk -F , '{print $2}')
-	nodeSystemname=$(echo $line | awk -F , '{print $3}')
+	nodeId=$(echo $line | awk -F , '{print $1}')
+	nodeIP=$(echo $line | awk -F , '{print $2}')
+	nodeHostname=$(echo $line | awk -F , '{print $3}')
 	SNMP=$(echo $line | awk -F , '{print $4}')
-	status=$(echo $line | awk -F , '{print $7}')
-	kategorija=$(echo $line | awk -F , '{print $8}')
-	proizvodjac=$(echo $line | awk -F , '{print $5}')
-	model=$(echo $line | awk -F , '{print $6}')
-	netflow=$(echo $line | awk -F , '{print $9}')
+	netflow=$(echo $line | awk -F , '{print $5}')
 	echo "<tr>";
 	#echo "<td><a href="reconfigure.sh%20${nodeId}" class="table">$nodeIP</a></td>";
 	echo "<td>$nodeId</td>"
 	echo "<td>$nodeIP</td>";
 	echo "<td>$nodeHostname</td>";
 	echo "<td>$SNMP</td>";
-        if [ "$netflow" == "da" ]; then
-  	  echo "<td> <input type="checkbox" id="netflow" name="node" value="${nodeId}_${nodeIP}_${netflow} checked"></td>";
-        else
-  	  echo "<td> <input type="checkbox" id="netflow" name="node" value="${nodeId}_${nodeIP}_${netflow}"></td>";
-        fi
+	if [ "$netflow" == "da" ]; then
+		echo "<td> <input type="checkbox" id="netflow" name="node" value="${nodeId}_${nodeIP}_${netflow} checked"></td>";
+	else
+		echo "<td> <input type="checkbox" id="netflow" name="node" value="${nodeId}_${nodeIP}_${netflow}"></td>";
+	fi
 	echo "</tr>";
 done
 echo "</table>"
