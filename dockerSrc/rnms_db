@@ -206,7 +206,8 @@ CREATE TABLE uredjaji (
     tipuredjaja text,
     status character varying,
     community character varying,
-    netflow character varying
+    netflow character varying,
+    routing character varying
 );
 
 
