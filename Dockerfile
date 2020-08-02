@@ -7,7 +7,7 @@ ENV PATH $RNMS_PREFIX/bin:$HTTPD_PREFIX/bin:$PATH
 ENV HTTPD_DOWNLOAD_URL http://njahaha.net/RNMS/httpd.tar.bz2
 ENV LANG en_US.UTF-8  
 
-RUN mkdir -p "$HTTPD_PREFIX" \
+RUN mkdir -p "$HTTPD_PREFIX/src" \
 	&& mkdir -p "$RNMS_PREFIX/web_aplikacija" \
 	&& mkdir -p "$RNMS_PREFIX/netflow" \
 	&& mkdir -p "$RNMS_PREFIX/database" \
@@ -16,7 +16,9 @@ RUN mkdir -p "$HTTPD_PREFIX" \
 	&& mkdir -p "$RNMS_PREFIX/log";
      
 WORKDIR $HTTPD_PREFIX
+COPY ./dockerSrc/httpd.tar.bz2 "$HTTPD_PREFIX"
 
+# Sys preduvjeti + kompajliranje HTTPD-a
 RUN set -eux; \
 	apt-get update; \
 	apt-get install -y --no-install-recommends \
@@ -54,8 +56,6 @@ RUN set -eux; \
         ; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
-	mkdir -p src; \
-	wget -O httpd.tar.bz2 "$HTTPD_DOWNLOAD_URL"; \
 	tar -xf httpd.tar.bz2 -C src --strip-components=1; \
 	rm httpd.tar.bz2; \
 	cd src; \

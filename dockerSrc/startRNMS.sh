@@ -41,4 +41,5 @@ rnms () {
             rnms checkStatus.sh 192.168.1.1 public
 
 EOF
+/RNMS/bin/controlNetflow.sh
 exec httpd -DFOREGROUND "$@" 
