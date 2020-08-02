@@ -12,7 +12,7 @@ REF:
                     - Template ID: jednoznačno označuje konkretni template record, jedinstven je na razini uređaja (dakle, u slučaju više flow exportera ne mora biti jedinstven stoga Collector treba uzeti u obzir i Template ID i Source IP adresu exportera za ispravno uparivanje podataka)
         - **DATA**:
             - Data Flowset: kolekcija jednog ili više **data recorda**
-                - Data record: konkretni podaci o konkretnom flowu na uređaju koji je kreirao Export packet, Data FlowSet ID se mapira na Template ID
+                - Data record: konkretni podaci o konkretnom flowu na uređaju koji je kreirao Export packet, FlowSet ID u Data FlowSetu se može mapirati na Template ID
     - **Options template**: specijalni template zapis koji opisuje format podataka NetFlow procesa na exporteru
     - **Options data record**: specijalni data record koji sadrži podatke o Netflow procesu na exporteru (rezervirani template id)
 
