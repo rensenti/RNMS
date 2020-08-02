@@ -124,15 +124,23 @@ interaktivniOpseg () {
 # TU POCINJEM
 . /RNMS/bin/pomagalice && hostIP > /dev/null
 
-if [[ "$1" == "RNMS" ]]; then
+if [ -z $1 ] || [ "$1" == "RNMS" ]  || [ "$1" == "rnms" ]; then
+    # npr.
+    # checkPerf.sh RNMS 5
     rnms=1
-    polling=$2
+    if [ -z $2 ]; then
+        polling=5
+    else
+        polling=$2
+    fi
     rnms=1
     grafUnazad=20000
     graphDir=/RNMS/web_aplikacija/slike/perfGrafovi
     URL="http://$RNMS_IP/slike/perfGrafovi"
     rnmsOpseg
 elif [[ "$1" == "na-zahtjev" ]]; then
+    # npr.
+    # checkPerf.sh na-zahtjev 192.168.1.1 public
     rnms=0
     ip=$2
     community=$3

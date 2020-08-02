@@ -114,7 +114,7 @@ rnms () {
     unset IFS	
 }
 
-if [ -z $1 ]; then
+if [ -z $1 ] || [ "$1" == "RNMS" ]  || [ "$1" == "rnms" ]; then
     rnms
 else
     rnms=0
