@@ -12,9 +12,10 @@ REF:
                     - Template ID: jednoznačno označuje konkretni template record, jedinstven je na razini uređaja (dakle, u slučaju više flow exportera ne mora biti jedinstven stoga Collector treba uzeti u obzir i Template ID i Source IP adresu exportera za ispravno uparivanje podataka)
         - **DATA**:
             - Data Flowset: kolekcija jednog ili više **data recorda**
-                - Data record: konkretni podaci o konkretnom flowu na uređaju koji je kreirao Export packet, FlowSet ID u Data FlowSetu se može mapirati na Template ID
-    - **Options template**: specijalni template zapis koji opisuje format podataka NetFlow procesa na exporteru
-    - **Options data record**: specijalni data record koji sadrži podatke o Netflow procesu na exporteru (rezervirani template id)
+                - Data record: konkretni podaci o konkretnom flowu na uređaju koji je kreirao Export packet, FlowSet ID u Data FlowSetu se može mapirati na Template ID Template FlowSeta
+    - **Options FlowSet** - posebni FlowSet
+        - **Options template**: specijalni template zapis koji opisuje format podataka NetFlow procesa na exporteru 
+        - **Options data record**: specijalni data record koji sadrži podatke o Netflow procesu na exporteru (rezervirani template id)
 
     Isti export paket može sadržavati i Template FlowSet i Data FlowSetove
 
@@ -28,3 +29,7 @@ REF:
 | Package Sequence | Brojač (kao u SNMP-u – vrijednost koja se povećava) broja izvezenih paketa. Ovo polje može poslužiti za prepoznavanje ima li izgubljenih paketa. | 
 | Source ID        | 32-bitna vrijednost koja jednoznačno označava  NetFlow instancu na senzor uređaju                                                                |
 
+FlowSet ID vrijednost u FlowSetu može biti 0-255 ukoliko se radi o Templateu (trenutno je uvijek 0, odnosno 1 ako je options template), odnosno 256 naviše ukoliko se radi o Data FlowSetu. Polje Template ID u Template FlowSetu definira određeni Data FlowSet. Dakle, za uparivanje Template FlowSeta i Data FlowSeta koriste se polja `Template ID` od Template FlowSeta i `FlowSet ID` konkretnog Data FlowSeta.
+
+
+Ključno za uparivanje template -> data jest: The template ID in the template record maps to the FlowSet ID in a corresponding data FlowSet
