@@ -1,6 +1,6 @@
 #!/bin/bash
 . pomagalice
-uredjaji=$(upitBaza "select uredjaji.id,uredjaji.ip,uredjaji.hostname,uredjaji.snmp,uredjaji.routing from uredjaji ORDER BY uredjaji.id")
+uredjaji=$(upitBaza "select uredjaji.id,uredjaji.ip,uredjaji.hostname,uredjaji.snmp,uredjaji.routing from uredjaji where uredjaji.snmp='da' ORDER BY uredjaji.id")
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
