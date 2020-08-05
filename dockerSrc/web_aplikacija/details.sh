@@ -130,7 +130,7 @@ if [ "$netflow" == "da" ]; then
         ifName=$(upitBaza "select ifname from sucelja where ifindex='$ifIndex' and nodeid='$id'");
         if [ ! -z $ifName ]; then
             echo "<tr>"
-            echo "$line" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+            echo "$line" | sed "0,/,$ifIndex,/s//,$ifName,/" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
             echo "</tr>"
         fi;
     done
@@ -162,7 +162,7 @@ if [ "$netflow" == "da" ]; then
         ifName=$(upitBaza "select ifname from sucelja where ifindex='$ifIndex' and nodeid='$id'");
         if [ ! -z $ifName ]; then
             echo "<tr>"
-            echo "$line" | sed "s/,$ifIndex,/,$ifName,/g" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+            echo "$line" | sed "0,/,$ifIndex,/s//,$ifName,/" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
             echo "</tr>"
         fi;
     done
