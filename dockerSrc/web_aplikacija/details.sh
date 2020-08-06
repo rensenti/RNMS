@@ -101,15 +101,25 @@ echo "</table>"
 echo "<h3>NetFlow podaci</h3>"
 echo "<div class="krugi">"
 if [ "$netflow" == "da" ]; then
-    prije15min=$(date -d "-15 minutes" +%Y/%m/%d.%H:%M:%S)
+    if [ ! -z $QUERY_STRING ]; then
+        # npr. URL http://rnms.snt.corp/details.sh?id=2&minute=5
+        minute=$(echo $QUERY_STRING | awk -F "&" '{print $2}' | awk -F = '{print $2}')
+        if [ -z $minute ]; then
+        # npr. URL kad minute nisu specificirane http://rnms.snt.corp/details.sh?id=2
+            minute="15"
+        fi
+    else
+        minute="15"
+    fi
+    prijeX=$(date -d "-$minute minutes" +%Y/%m/%d.%H:%M:%S)
     sad=$(date +%Y/%m/%d.%H:%M:%S)
-    vrijemenskaDimenzija="${prije15min}-${sad}"
+    vrijemenskaDimenzija="${prijeX}-${sad}"
     echo "<b>Statistika o suceljima</b>:<br><br>DOLAZNA SUČELJA:<br><br>"
     echo "<table>"
     echo "<thead>"
     echo "<tr>"
-    echo "  <th>Početni flow</th>" # ts
-    echo "  <th>Posljednji flow</th>" # te
+    echo "  <th>Početni tok</th>" # ts
+    echo "  <th>Posljednji tok</th>" # te
     echo "  <th>Trajanje</th>" # td
     echo "  <th>Protokol</th>" # pr
     echo "  <th>Ulazno sučelje</th>" # val
@@ -125,7 +135,7 @@ if [ "$netflow" == "da" ]; then
     echo "</tr>"
     echo "</thead>"
     IFS=$'\n';
-    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s inif -t $vrijemenskaDimenzija -o csv | head -n-4); do
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s inif -t $vrijemenskaDimenzija -o csv -q); do
         ifIndex=$(echo $line | awk -F , '{print $5}');
         ifName=$(upitBaza "select ifname from sucelja where ifindex='$ifIndex' and nodeid='$id'");
         if [ ! -z $ifName ]; then
@@ -140,8 +150,8 @@ if [ "$netflow" == "da" ]; then
     echo "<table>"
     echo "<thead>"
     echo "<tr>"
-    echo "  <th>Početni flow</th>" # ts
-    echo "  <th>Posljednji flow</th>" # te
+    echo "  <th>Početni tok</th>" # ts
+    echo "  <th>Posljednji tok</th>" # te
     echo "  <th>Trajanje</th>" # td
     echo "  <th>Protokol</th>" # pr
     echo "  <th>Izlazno sučelje</th>" # val
@@ -157,7 +167,7 @@ if [ "$netflow" == "da" ]; then
     echo "</tr>"
     echo "</thead>"
     IFS=$'\n';
-    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s outif -t $vrijemenskaDimenzija -o csv | head -n-4); do
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id} -s outif -t $vrijemenskaDimenzija -o csv -q); do
         ifIndex=$(echo $line | awk -F , '{print $5}');
         ifName=$(upitBaza "select ifname from sucelja where ifindex='$ifIndex' and nodeid='$id'");
         if [ ! -z $ifName ]; then
@@ -166,17 +176,38 @@ if [ "$netflow" == "da" ]; then
             echo "</tr>"
         fi;
     done
-    unset IFS;
     echo "</table>"
-    #echo $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -s if | sed 's/$/\<br\>\<br\>/g' | grep -Pv 'Sys|processed')
+    echo "<b>TOP razgovori</b>:<br><br><br><br>"
+    echo "<table>"
+    echo "<thead>"
+    echo "<tr>"
+    echo "  <th>Početni tok</th>" # ts
+    echo "  <th>Trajanje</th>" # td
+    echo "  <th>Izvor IP</th>" # pa
+    echo "  <th>Protokol</th>" # pr
+    echo "  <th>Odredisni IP:port</th>" # dap
+    echo "  <th>Broj paketa</th>" # pkt
+    echo "  <th>Byte</th>" # byt
+    echo "  <th>Byte po paketu</th>" # bpp
+    echo "  <th>Broj tokova</th>" # fw
+    echo "</tr>"
+    echo "</thead>"
+    unset IFS;
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -A srcip,dstip,dstport,proto -O bytes -n 10 -o "fmt:%ts,%td,%sa,%pr,%dap,%pkt,%byt,%bpp,%fl" -q | sed 's/\s//g'); do
+        echo "<tr>"
+        echo "$line" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+        echo "</tr>"
+    done
+    echo "</table>"
     echo "<br><br>"
     echo "<div class="netflow">"
     echo "<b>Statistika o protokolima</b>:<br><br>"
-    echo $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -s proto -t $vrijemenskaDimenzija |  sed 's/$/\<br\>\<br\>/g')
+    echo $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -s port:proto/bytes -n 10 | sed 's/$/\<br\>\<br\>/g')
+    echo "<br><br>"
+
 else
     echo "Za navedeni uredjaj trenutno nema NetFlow podataka<br><br>"
 fi
-  
 echo "</div>"
 echo "</html>"
 unset IFS
