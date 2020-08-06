@@ -192,19 +192,39 @@ if [ "$netflow" == "da" ]; then
     echo "  <th>Broj tokova</th>" # fw
     echo "</tr>"
     echo "</thead>"
-    unset IFS;
     for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -A srcip,dstip,dstport,proto -O bytes -n 10 -o "fmt:%ts,%td,%sa,%pr,%dap,%pkt,%byt,%bpp,%fl" -q | sed 's/\s//g'); do
         echo "<tr>"
         echo "$line" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
         echo "</tr>"
     done
     echo "</table>"
-    echo "<br><br>"
-    echo "<div class="netflow">"
-    echo "<b>Statistika o protokolima</b>:<br><br>"
-    echo $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -s port:proto/bytes -n 10 | sed 's/$/\<br\>\<br\>/g')
-    echo "<br><br>"
-
+    echo "</table>"
+    echo "<b>Statistika o protokolima</b>:<br><br><br><br>"
+    echo "<table>"
+    echo "<thead>"
+    echo "<tr>"
+    echo "  <th>Početni tok</th>" # ts
+    echo "  <th>Posljednji tok</th>" # te
+    echo "  <th>Trajanje</th>" # td
+    echo "  <th>Protokol</th>" # pr
+    echo "  <th>Odredišni port</th>" # val
+    echo "  <th>Broj tokova</th>" # fl
+    echo "  <th>Postotak tokova</th>" # flP
+    echo "  <th>Broj paketa</th>" # opkt
+    echo "  <th>Postotak paketa</th>" # opktP
+    echo "  <th>Byte</th>" # obyt
+    echo "  <th>Postotak byte</th>" # obytP
+    echo "  <th>Broj paketa u sekundi</th>" # opps
+    echo "  <th>Bit po sekundi (bps)</th>" # opbs
+    echo "  <th>Byte po paketu</th>" # obpp
+    echo "</tr>"
+    echo "</thead>"
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -s port:proto/bytes -O bytes -n 10 -o csv -q | tail -n+2); do
+        echo "<tr>"
+        echo "$line" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
+        echo "</tr>"
+    done
+    unset IFS;
 else
     echo "Za navedeni uredjaj trenutno nema NetFlow podataka<br><br>"
 fi
