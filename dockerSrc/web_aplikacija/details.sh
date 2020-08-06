@@ -108,6 +108,13 @@ if [ "$netflow" == "da" ]; then
         # npr. URL kad minute nisu specificirane http://rnms.snt.corp/details.sh?id=2
             minute="15"
         fi
+        top=$(echo $QUERY_STRING | awk -F "&" '{print $3}' | awk -F = '{print $2}')
+        if [ -z $top ]; then
+        # npr. URL kad top nisu specificirane http://rnms.snt.corp/details.sh?id=2
+            top="10"
+        fi
+        
+
     else
         minute="15"
     fi
@@ -192,7 +199,7 @@ if [ "$netflow" == "da" ]; then
     echo "  <th>Broj tokova</th>" # fw
     echo "</tr>"
     echo "</thead>"
-    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -A srcip,dstip,dstport,proto -O bytes -n 10 -o "fmt:%ts,%td,%sa,%pr,%dap,%pkt,%byt,%bpp,%fl" -q | sed 's/\s//g'); do
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -A srcip,dstip,dstport,proto -O bytes -n $top -o "fmt:%ts,%td,%sa,%pr,%dap,%pkt,%byt,%bpp,%fl" -q | sed 's/\s//g'); do
         echo "<tr>"
         echo "$line" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
         echo "</tr>"
@@ -219,7 +226,7 @@ if [ "$netflow" == "da" ]; then
     echo "  <th>Byte po paketu</th>" # obpp
     echo "</tr>"
     echo "</thead>"
-    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -s port:proto/bytes -O bytes -n 10 -o csv -q | tail -n+2); do
+    for line in $(nfdump -R $RNMS_PREFIX/netflow/${id}/ -T -t $vrijemenskaDimenzija -s port:proto/bytes -O bytes -n $top -o csv -q | tail -n+2); do
         echo "<tr>"
         echo "$line" | sed 's/,/<\/td><td>/g' | sed 's/^/<td>/g';
         echo "</tr>"
