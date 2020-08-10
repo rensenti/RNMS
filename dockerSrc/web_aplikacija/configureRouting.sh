@@ -19,7 +19,7 @@ IFS=$'&';
 for line in $(echo "$POST"); do 
   id=$(echo $line | awk -F "node=" '{print $2}' | awk -F "_" '{print $1}');
   unosBaza "update uredjaji set routing='da' where id=$id" > /dev/null 2>&1
-  mkdir "$RNMS_PREFIX/routing/$id" > /dev/null 2>&1
+  mkdir -p "$RNMS_PREFIX/routing/$id" > /dev/null 2>&1
 done;
 IFS=$'\n'
 echo "<p>"
