@@ -1,4 +1,5 @@
 rnmsBuildAndStart () {
+    ver=$1
     docker build -t rnms:0.3 .
 #   mount="$(pwd)/$(hostname -s)_rnms_mount"
 #   if [ ! -d $mount ]; then mkdir -p $mount; fi
@@ -10,7 +11,7 @@ rnmsBuildAndStart () {
 }
 
 rnmsDestroy () {
-    docker stop rnms && docker rm rnms && docker rmi rnms:0.3
+    docker stop rnms && docker rm rnms && docker rmi rnms:$(docker image ls | grep rnms | head -1 | awk '{print $2}')
 }
 
 rnms () {
@@ -22,9 +23,9 @@ rnms () {
 }
 
 rnmsHomeRecreateAndDiscover () {
-    docker stop rnms; rm -rf /var/opt/RNMS_volume/*;  rnmsDestroy && rnmsBuildAndStart && sleep 120 && rnms networkDiscovery.sh 10.13.37.2/32,rensenti && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
+    docker stop rnms; rm -rf /var/opt/RNMS_volume/*;  rnmsDestroy && rnmsBuildAndStart $1 && sleep 120 && rnms networkDiscovery.sh 10.13.37.2/32,rensenti && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
 }
 
 rnmsOfficeRecreateAndDiscover () {
-    rm -rf /var/opt/RNMS_volume/* && rnmsDestroy && rnmsBuildAndStart && sleep 120 && rnms networkDiscovery.sh 10.16.97.159/32,sntsnmpwifi1 10.88.88.21,public 10.88.88.22,public 10.88.88.23,public 10.88.88.24,public 10.88.88.10,public 10.88.88.11,public 10.88.88.12,public  && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
+    rm -rf /var/opt/RNMS_volume/* && rnmsDestroy && rnmsBuildAndStart $1 && sleep 120 && rnms networkDiscovery.sh 10.16.97.159/32,sntsnmpwifi1 10.88.88.21,public 10.88.88.22,public 10.88.88.23,public 10.88.88.24,public 10.88.88.10,public 10.88.88.11,public 10.88.88.12,public  && rnms checkStatus.sh && rnms checkPerf.sh RNMS 5
 }
