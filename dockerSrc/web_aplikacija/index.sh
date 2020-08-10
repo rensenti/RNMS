@@ -8,6 +8,8 @@ statusPoll=$(crontab -l | grep Status | grep -v '#' | awk -F '*' '{print $2}' | 
 perfPoll=$(crontab -l | grep Perf | grep -v '#' | awk -F '*' '{print $2}' | grep -Po '\d*')
 suceljaPerf=$(find $RNMS_PREFIX/rrdb | grep -vc zahtjev)
 netflowExporters=$(upitBaza "select count(distinct uredjaji.ip) from uredjaji where netflow='da'")
+routing=$(upitBaza "select count(distinct uredjaji.ip) from uredjaji where routing='da'")
+
 IFS=$'\n'
 echo "Content-Type: text/html"
 echo
@@ -23,14 +25,15 @@ echo "<p></p>"
 echo "<div class="krugi">"
 echo "<div class="circle2"><p class="small">Broj uređaja:<br><br>$brojUredjaja</p></div>"
 echo "<div class="circle2"><p class="small">Broj sučelja:<br><br>$brojSucelja</p></div>"
-echo "<div class="circle3"><p class="small">Broj neOK sučelja:<br><br>$neOKsucelja</p></div>"
-echo "<div class="circle3"><p class="small">Broj neOK uređaja:<br><br>$neOKuredjaja</p></div>"
+echo "<div class="circle3"><p class="small">Broj sučelja u kvaru:<br><br>$neOKsucelja</p></div>"
+echo "<div class="circle3"><p class="small">Broj uređaja u kvaru:<br><br>$neOKuredjaja</p></div>"
 echo "<div class="perf"><p class="stats">"
 echo "RNMS statisticki podaci:<br>"
 echo "• SNMP Fault polling interval (min): $statusPoll<br>"
 echo "• SNMP Perf polling interval (min): $perfPoll<br>-----<br>"
 echo "• Broj SNMP performance polled sučelja: $suceljaPerf<br>------<br>"
-echo "• Broj NetFlow sensora (krajnjih uređaja): $netflowExporters<br><br>"
+echo "• Broj NetFlow sensora (krajnjih uređaja): $netflowExporters<br>"
+echo "• Broj nadziranih usmjerničkih tablica: $routing<br>"
 echo "</div><br><br><br><br></div>"
 echo "<div class="funkcije">"
 
