@@ -3,9 +3,8 @@ rnmsBuildAndStart () {
     docker build -t rnms:${ver} .
 #   mount="$(pwd)/$(hostname -s)_rnms_mount"
 #   if [ ! -d $mount ]; then mkdir -p $mount; fi
-    mkdir /var/opt/RNMS_volume
-    #docker run -dit --name rnms-dev -p 8080:80/tcp -p 2055:2055/udp --mount type=bind,source=$mount,target=/RNMS rnms:0.3
-    docker run -dit --name rnms --hostname RNMS-kontejner -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS_volume,target=/RNMS rnms:0.3
+    mkdir /var/opt/RNMS_volume 8080:80/tcp -p 2055:2055/udp --mount type=bind,source=$mount,target=/RNMS rnms:${ver}
+    docker run -dit --name rnms --hostname RNMS-kontejner -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS_volume,target=/RNMS rnms${ver}
     docker ps
     docker logs rnms
 }
