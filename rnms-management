@@ -1,6 +1,6 @@
 rnmsBuildAndStart () {
     ver=$1
-    docker build -t rnms:0.3 .
+    docker build -t rnms:${ver} .
 #   mount="$(pwd)/$(hostname -s)_rnms_mount"
 #   if [ ! -d $mount ]; then mkdir -p $mount; fi
     mkdir /var/opt/RNMS_volume
