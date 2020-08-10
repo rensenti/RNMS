@@ -7,7 +7,7 @@ if [ -z $QUERY_STRING ]; then
 else
     id=$(echo $QUERY_STRING | awk -F "&" '{print $1}' | awk -F = '{print $2}')
 fi
-uredjaj=$(upitBaza "select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) where uredjaji.id="$id" ORDER BY deviceprofile.proizvodjac")
+uredjaj=$(upitBaza "select uredjaji.ip,uredjaji.hostname,uredjaji.systemname,uredjaji.snmp,deviceprofile.proizvodjac,deviceprofile.model,uredjaji.status,deviceprofile.kategorija,uredjaji.netflow,uredjaji.id,uredjaji.routing from uredjaji left join deviceprofile on (uredjaji.tipuredjaja = deviceprofile.oid) where uredjaji.id="$id" ORDER BY deviceprofile.proizvodjac")
 sucelja=$(upitBaza "select sucelja.id,uredjaji.ip,sucelja.ifname,sucelja.ifalias,sucelja.ifphysaddress,sucelja.iftype,sucelja.status,sucelja.nodeid,sucelja.ip_adresa,sucelja.ifspeed from sucelja inner join uredjaji on (nodeid = uredjaji.id) where sucelja.nodeid="$id" ORDER BY uredjaji.ip,sucelja.ifname")
 IFS=$'\n'
 echo "Content-Type: text/html"
@@ -48,6 +48,7 @@ for line in $uredjaj; do
     proizvodjac=$(echo $line | awk -F , '{print $5}')
     model=$(echo $line | awk -F , '{print $6}')
     netflow=$(echo $line | awk -F , '{print $9}')
+    routing=$(echo $line | awk -F , '{print $11}')
     echo "<tr>";
     #echo "<td><a href="reconfigure.sh%20${nodeId}" class="table">$nodeIP</a></td>";
     echo "<td>$nodeIP</td>";
@@ -97,7 +98,28 @@ for line in $sucelja; do
     echo "</tr>";
 done
 echo "</table>"
-
+echo "<h3>Usmjernička tablica</h3>"
+echo "<div class="krugi">"
+echo "<div class="term">"
+if [ "$routing" == "da" ]; then
+    routingDir=$RNMS_PREFIX/routing/${id}/
+    sadasnja=$routingDir/sadasnja
+    prethodna=$routingDir/prethodna
+    echo "Trenutna ($(date -r $sadasnja | awk '{print $4}')) usmjernička tablica:<br><br>"
+    cat $sadasnja | sed 's/$/\<br\>\<br\>/g'
+    promjena=$(diff $sadasnja $prethodna | wc -l)
+    if [ $promjena -ge 1 ]; then
+        echo "</div></div>"
+        echo "<br><br>ZABILJEŽENA PROMJENA U ODNOSU NA PRIJAŠNJU TABLICU<br><br>"
+        echo "<div class="krugi">"
+        echo "<div class="term">"
+        diff -y $sadasnja $prethodna | tail -n-10| sed 's/$/\<br\>\<br\>/g'
+        echo "</div></div>"
+    fi
+else
+    echo "Na navedenom uređaju se ne nadzire usmjernička tablica<br><br>"
+fi
+echo "</div></div>"
 echo "<h3>NetFlow podaci</h3>"
 echo "<div class="krugi">"
 if [ "$netflow" == "da" ]; then
@@ -113,8 +135,6 @@ if [ "$netflow" == "da" ]; then
         # npr. URL kad top nisu specificirane http://rnms.snt.corp/details.sh?id=2
             top="10"
         fi
-        
-
     else
         minute="15"
     fi

@@ -1,4 +1,5 @@
 #!/bin/bash
+. pomagalice
 # IZ IANA-RTPROTO-MIB
 # IANAipRouteProtocol ::= TEXTUAL-CONVENTION
 #    SYNTAX      INTEGER {
@@ -70,7 +71,7 @@ for mreza in $routing; do
     fi
     ifindex=$(grep "ipCidrRouteIfIndex.${mreza}" $tmpCidr | awk -F "INTEGER: " '{print $2}')
     for interface in $ifindex; do
-        sucelje=$(snmpget -m all -v 2c -c $community $ip .1.3.6.1.2.1.2.2.1.2.${interface} | awk -F "STRING: " '{print $2}')
+        sucelje=$(snmpget -m all -v 2c -c $community $ip .1.3.6.1.2.1.2.2.1.2.${interface} 2>/dev/null | awk -F "STRING: " '{print $2}')
     done
     maska=$(grep "ipCidrRouteMask.${mreza}" $tmpCidr | awk -F "IpAddress: " '{print $2}')
     nextHop=$(grep "ipCidrRouteNextHop.${mreza}" $tmpCidr | awk -F "IpAddress: " '{print $2}')
@@ -104,6 +105,32 @@ for mreza in $routing; do
 done
 }
 
+rnms () {
+opsegRNMS=$(upitBaza "select ip,community,id from uredjaji where routing='da' and status='OK (SNMP)'")
+for line in $opsegRNMS; do
+    ip=$(echo $line | awk -F , '{print $1}')
+    community=$(echo $line | awk -F , '{print $2}')
+    id=$(echo $line | awk -F , '{print $3}')
+    echo $ip - $community - $id
+    routingDir=$RNMS_PREFIX/routing/${id}/
+    if [ ! -d ]; then
+        mkdir -p $routingDir
+    fi
+    prethodna=$routingDir/prethodna
+    sadasnja=$routingDir/sadasnja
+    if [ -f "$sadasnja" ]; then
+        mv $sadasnja $prethodna
+    fi
+    getRoutingCIDR > $sadasnja 2>/dev/null
+done
+}
+
+if [ -z $1 ] || [ "$1"  == "RNMS" ]  || [ "$1" == "rnms" ]; then
+    rnms
+else
+    ip=$1
+    community=$2
+fi
 ip=$1
 community=$2
 getRoutingCIDR

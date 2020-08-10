@@ -116,6 +116,7 @@ rnms () {
 
 if [ -z $1 ] || [ "$1" == "RNMS" ]  || [ "$1" == "rnms" ]; then
     rnms
+    $RNMS_PREFIX/bin/getRoutingTable.sh RNMS > /dev/null 2>&1
 else
     rnms=0
     ip=$1
