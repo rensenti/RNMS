@@ -27,3 +27,19 @@ korisnik                        +<---->   * GENERIRANJE HTML-A      |     | (SHE
             |                                                                                                          |
             +----------------------------------------------------------------------------------------------------------+
 ```
+## Upogonjavanje RNMS-a
+- preduvjet je instaliran Docker engine na x86_64 ili armv7 računalu
+- otvoreni TCP 80 i UDP 2055 portovi na računalu
+
+Pokretanje RNMS-a:
+x86-64:
+```bash
+mkdir /var/opt/RNMS
+docker run -dit --name rnms -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS,target=/RNMS rdebeuc/rnms:x86-64-latest
+```
+
+armv7:
+```bash
+mkdir /var/opt/RNMS
+docker run -dit --name rnms -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS,target=/RNMS rdebeuc/rnms:armv7-latest
+```
