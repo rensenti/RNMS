@@ -32,6 +32,7 @@ korisnik                        +<---->   * GENERIRANJE HTML-A      |     | (SHE
 - otvoreni TCP 80 i UDP 2055 portovi na računalu
 
 Pokretanje RNMS-a:
+
 x86-64:
 ```bash
 mkdir /var/opt/RNMS
