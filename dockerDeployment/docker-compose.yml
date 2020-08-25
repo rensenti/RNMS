@@ -2,8 +2,7 @@ version: '3'
 services:
 rnms:
   container_name: rnms
-#  image: rdebeuc/rnms:x86_64-latest
-  image: rnms:0.3
+  image: rdebeuc/rnms:x86-64-latest
   volumes:
     - /var/opt/RNMS:/RNMS
   environment:
