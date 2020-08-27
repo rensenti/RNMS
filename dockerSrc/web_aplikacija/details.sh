@@ -88,12 +88,12 @@ for line in $sucelja; do
     ifSpeed=$(echo $line | awk -F , '{print $10}');
     ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
     echo "<tr>";
-    echo "  <td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
+    echo "  <td>$ifName<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}_paketi.png\"></td>";
     echo "  <td>$ipAdresa</td>";
     echo "  <td>$ifAlias</td>";
     echo "  <td>$ifPhysAddress</td>";
     echo "  <td>$ifType</td>";
-    echo "  <td>$ifSpeed</td>";
+    echo "	<td>$ifSpeed<div class=\"popup\"><img src=\"slike/perfGrafovi/${nodeIP}_${ifNameURLFriendly}.png\"></td>";
     echo "  <td>$status</td>";
     echo "</tr>";
 done
