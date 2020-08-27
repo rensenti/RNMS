@@ -14,8 +14,6 @@ echo "<body>"
 
 echo "<p class="small"><a href="index.sh"> < RNMS početna</a></p><h1>UREĐAJI</h1>"
 echo "<table>"
-#echo "$(for line in $uredjajiSNMP; do echo "<tr>"; for milutin in $(echo $line | sed 's/,/\n/g'); do echo  "<td>"; echo $milutin; echo "</td>"; done; echo "</tr>" ; done)"
-#echo "$(for line in $uredjaji; do echo "<tr>"; for milutin in $(echo $line | sed 's/,/\n/g'); do echo  "<td>"; echo $milutin; echo "</td>"; done; echo "</tr>" ; done)"
 
  echo "<thead>"
  echo " <tr>"
@@ -44,7 +42,7 @@ for line in $uredjaji; do
 	netflow=$(echo $line | awk -F , '{print $9}')
 	echo "<tr>";
 	#echo "<td><form action="details.sh" method="post"><button type="submit" name="nodeId" value="$nodeId" class="skrivena_forma">$nodeIP</button></form></td>"
-	echo "<td><a href="details.sh?id=${nodeId}" class="table">$nodeIP</a></td>"
+	echo "<td><a href="details.sh?id=${nodeId}\&vrijeme=15\&top=10" class="table">$nodeIP</a></td>"
 	echo "<td>$nodeHostname</td>";
 	echo "<td>$nodeSystemname</td>";
 	echo "<td>$SNMP</td>";
