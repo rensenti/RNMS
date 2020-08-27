@@ -245,6 +245,7 @@ a.table:visited {color: #000; text-decoration: none; }
 .krugi .term {
    margin-left:10px;
    width:95%;
+   z-index:-1;
 }
 .krugi .netflow {
   border:10px solid #000;
