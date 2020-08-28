@@ -146,7 +146,7 @@ preuzmiPerfPodatke () {
     sviOdlazniPaketi=$(( $ifHCOutUcastPkts + $ifHCOutMulticastPkts + $ifHCOutBroadcastPkts ))
     # GRIJEŠKE
     ifInErrors=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.14.${ifIndex} | awk -F "Counter32: " '{print $2}')
-    ifOutErrors=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.18.${ifIndex} | awk -F "Counter32: " '{print $2}')
+    ifOutErrors=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.20.${ifIndex} | awk -F "Counter32: " '{print $2}')
     ifInDiscards=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.13.${ifIndex} | awk -F "Counter32: " '{print $2}')
     ifOutDiscards=$(snmpget -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.19.${ifIndex} | awk -F "Counter32: " '{print $2}')
     # OSTALO
