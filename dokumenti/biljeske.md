@@ -123,3 +123,8 @@ snmpTargetAddrExtTable OBJECT-TYPE
          message format does not specify a maximum message size."
 ::= { iso(1) org(3) dod(6) internet(1) snmpV2(6) snmpModules(3) snmpCommunityMIB(18) snmpCommunityMIBObjects(1) 2 }
 ```
+**Izvuci numerički OID samo na temelju kratkog qualified imena varijable**
+```
+snmptranslate -m all -IR -On ifHCInOctets
+.1.3.6.1.2.1.31.1.1.1.6
+```
