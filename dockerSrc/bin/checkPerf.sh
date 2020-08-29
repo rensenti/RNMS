@@ -126,8 +126,6 @@ narisiGraf () {
             GPRINT:ifOutDiscards:MIN:"MIN\\: %6.1lf" \
             GPRINT:ifOutDiscards:MAX:"MAKS\\: %6.1lf" > /dev/null 2>&1
     echo "   -kreiran ili azuriran RRDTOOL graf: $URL/${ip}_${ifNameURLFriendly}_paketi.png"
-
-
  }
 
 preuzmiPerfPodatke () {
@@ -174,11 +172,14 @@ interaktivniOpseg () {
         ifName=$(snmpget -v2c -c $community $ip 1.3.6.1.2.1.31.1.1.1.1.${ifIndex} | awk -F "\: " '{print $2}' | awk -F \" '{print $2}')
         ifNameURLFriendly=$(echo $ifName | sed 's;\/;;g')
         ifOperStatus=$(snmpget -m+IF-MIB -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.8.$ifIndex  | awk -F "INTEGER: " '{print $2}')
-        if [[ "$ifOperStatus" == "down(2)" ]]; then
-            continue
+        ifType=$(snmpget -m+IF-MIB -v 2c -c $community $ip 1.3.6.1.2.1.2.2.1.3.$ifIndex  | awk -F "\: " '{print $2}')
+        if [[ "$ifType" == "ethernetCsmacd(6)" || "$ifType" == "ieee80211(71)" || "$ifType" == "bridge(209)" || "$ifType" == "propPointToPointSerial(22)" ]]; then
+            if [[ "$ifOperStatus" != "up(1)" ]]; then
+                continue
+            fi
+            # 10 polling interval svakih 30 sekundi
+            preuzmiPerfPodatke && azurirajBazu && narisiGraf
         fi
-        # 10 polling interval svakih 30 sekundi
-        preuzmiPerfPodatke && azurirajBazu && narisiGraf
     done
 }
 
