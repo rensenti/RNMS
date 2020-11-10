@@ -1,4 +1,11 @@
-# RNMS docker deployment (Centos 7.x)
+# RNMS docker deployment
+**Preduvjeti za instalaciju/pokretanje**:
+- instaliran Docker engine
+- otvoreni TCP 80 i UDP 2055 portovi na vatrozidu
+- pristup Internetu
+
+> koraci u nastavku prikazuju primjer zadovoljavanja svih preduvjeta za upogonjavanje RNMS-a na CentOS 7.x poslužitelju
+
 **Instalacija docker + docker-compose sa svim preduvjetima:**
 ```bash
 yum clean all && yum -y update
@@ -13,7 +20,31 @@ ln -s /usr/local/bin/docker-compose /usr/bin/docker-compose
 systemctl enable --now docker
 ```
 
+**Upogonjavanje RNMS-a**
+
+Vatrozid promjene:
+```
+# provjera zadane zone na lokalnom vatrozidu
+firewall-cmd --get-default-zone
+# očekivani ispis: public, ako nije public, onda korigirati zonu (--zone) sukladno ispisu u donjim naredbama
+# omogućavanje dolaznog TCP 80 prometa
+firewall-cmd --permanent --zone=public --add-service=http
+# omogućavanje dolaznog UDP 2055 prometa
+firewall-cmd --permanent --zone=public  --add-port=2055/udp
+# primjena pravila
+firewall-cmd --reload
+```
+
+Pokretanje RNMS-a:
+x86-64:
+```bash
+mkdir /var/opt/RNMS
+docker run -dit --name rnms -e TZ="Europe/Zagreb" --network host --mount type=bind,source=/var/opt/RNMS,target=/RNMS rdebeuc/rnms:x86-64-latest
+```
+------
 **Docker razvojna okolina:**
+
+Koraci za uspostavljanje lokalne razvojne okoline:
 ```bash
 cd /usr/share
 mkdir RNMS
